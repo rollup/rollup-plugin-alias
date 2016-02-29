@@ -13,7 +13,7 @@ npm install rollup-plugin-alias
 ```
 
 ## Usage
-```
+```javascript
 import { rollup } from 'rollup';
 import alias from 'rollup-plugin-alias';
 
