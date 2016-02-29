@@ -3,6 +3,10 @@ Define aliases when bundling packages with Rollup.
 
 [![Build Status](https://travis-ci.org/frostney/rollup-plugin-alias.svg?branch=master)](https://travis-ci.org/frostney/rollup-plugin-alias) [![Dependency Status](https://david-dm.org/frostney/rollup-plugin-alias.svg)](https://david-dm.org/frostney/rollup-plugin-alias) [![devDependency Status](https://david-dm.org/frostney/rollup-plugin-alias/dev-status.svg)](https://david-dm.org/frostney/rollup-plugin-alias#info=devDependencies) [![Coverage Status](https://coveralls.io/repos/github/frostney/rollup-plugin-alias/badge.svg?branch=master)](https://coveralls.io/github/frostney/rollup-plugin-alias?branch=master)
 
+When we write tests, we may want an easier way to access the local library we are testing or mocking libraries. We may also define aliases to counteract "require hell" and get rid of all those `../../../` imports we may have in the process.
+
+For Webpack users: This is a plugin to have a `resolve.alias` functionality in Rollup.
+
 ## Installation
 ```
 npm install rollup-plugin-alias
