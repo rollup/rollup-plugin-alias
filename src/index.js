@@ -1,12 +1,23 @@
 import path from 'path';
+import fs from 'fs';
 
 // Helper functions
 const noop = () => null;
 // const identity = a => a;
 const startsWith = (needle, haystack) => ! haystack.indexOf(needle);
+const exists = uri => {
+  try {
+    return fs.statSync(uri).isFile();
+  } catch (e) {
+    return false;
+  }
+};
 
 export default function alias(options = {}) {
-  const aliasKeys = Object.keys(options);
+  const hasResolve = Array.isArray(options.resolve);
+  const resolve = hasResolve ? options.resolve : ['.js'];
+  const aliasKeys = hasResolve ?
+                      Object.keys(options).filter(k => k !== 'resolve') : Object.keys(options);
 
   // No aliases?
   if (!aliasKeys.length) {
@@ -31,8 +42,18 @@ export default function alias(options = {}) {
       if (updatedId.indexOf('./') === 0) {
         const directory = path.dirname(importer);
 
-        // TODO: Is there a way not to have the extension being defined explicitly?
-        return path.resolve(directory, updatedId) + '.js';
+        // Resolve file names
+        const filePath = path.resolve(directory, updatedId);
+        const match = resolve.map(ext => `${filePath}${ext}`)
+                            .find(exists);
+
+        if (match) {
+          return match;
+        }
+
+        // To keep the previous behaviour we simply return the file path
+        // with extension
+        return filePath + '.js';
       }
 
       return updatedId;
