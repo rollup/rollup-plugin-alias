@@ -1,13 +1,21 @@
 import path from 'path';
 
+// Helper functions
+const noop = () => null;
+// const identity = a => a;
+
 export default function alias(options = {}) {
+  const aliasKeys = Object.keys(options);
+
+  // No aliases?
+  if (!aliasKeys.length) {
+    return {
+      resolveId: noop,
+    };
+  }
+
   return {
     resolveId(importee, importer) {
-      if (Object.keys(options).length === 0) {
-        return null;
-      }
-
-      const aliasKeys = Object.keys(options);
       // TODO: We shouldn't have a case of double aliases. But may need to handle that better
       const filteredAlias = aliasKeys.filter(value => importee.indexOf(value) === 0)[0];
 
