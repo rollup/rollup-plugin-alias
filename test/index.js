@@ -59,6 +59,26 @@ test(t => {
   t.is(resolved, path.resolve(__dirname, './files/folder/hipster.jsx'));
 });
 
+test(t => {
+  const result = alias({
+    resolve: 'i/am/a/file',
+  });
+
+  const resolved = result.resolveId('resolve', '/src/import.js');
+
+  t.is(resolved, 'i/am/a/file');
+});
+
+test(t => {
+  const result = alias({
+    resolve: './i/am/a/local/file',
+  });
+
+  const resolved = result.resolveId('resolve', path.resolve(__dirname, './files/index.js'));
+
+  t.is(resolved, path.resolve(__dirname, './files/i/am/a/local/file.js'));
+});
+
 // Tests in Rollup
 test(t =>
   rollup({
