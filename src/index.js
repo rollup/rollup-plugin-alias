@@ -38,7 +38,7 @@ export default function alias(options = {}) {
 
       const updatedId = importee.replace(toReplace, entry);
 
-      if (updatedId.indexOf('./') === 0) {
+      if (startsWith('./', updatedId)) {
         const directory = path.dirname(importer);
 
         // Resolve file names
