@@ -1,5 +1,5 @@
 import test from 'ava';
-
+import path from 'path';
 import { rollup } from 'rollup';
 import alias from '../dist/rollup-plugin-alias';
 
@@ -45,6 +45,18 @@ test(t => {
 
   t.is(resolved, '/src/bar.js');
   t.is(resolved2, '/src/highly/nested/par/a/di/se.js');
+});
+
+// Test for the resolve property
+test(t => {
+  const result = alias({
+    ember: './folder/hipster',
+    resolve: ['.js', '.jsx'],
+  });
+
+  const resolved = result.resolveId('ember', path.resolve(__dirname, './files/index.js'));
+
+  t.is(resolved, path.resolve(__dirname, './files/folder/hipster.jsx'));
 });
 
 // Tests in Rollup
