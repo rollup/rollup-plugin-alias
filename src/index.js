@@ -29,8 +29,6 @@ export default function alias(options = {}) {
       const updatedId = importee.replace(toReplace, entry);
 
       if (updatedId.indexOf('./') === 0) {
-        // const basename = path.basename(importer);
-        // const directory = importer.split(basename)[0];
         const directory = path.dirname(importer);
 
         // TODO: Is there a way not to have the extension being defined explicitly?
