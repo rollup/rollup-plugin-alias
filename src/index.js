@@ -1,30 +1,58 @@
 import path from 'path';
+import fs from 'fs';
+
+// Helper functions
+const noop = () => null;
+const startsWith = (needle, haystack) => ! haystack.indexOf(needle);
+const exists = uri => {
+  try {
+    return fs.statSync(uri).isFile();
+  } catch (e) {
+    return false;
+  }
+};
 
 export default function alias(options = {}) {
+  const hasResolve = Array.isArray(options.resolve);
+  const resolve = hasResolve ? options.resolve : ['.js'];
+  const aliasKeys = hasResolve ?
+                      Object.keys(options).filter(k => k !== 'resolve') : Object.keys(options);
+
+  // No aliases?
+  if (!aliasKeys.length) {
+    return {
+      resolveId: noop,
+    };
+  }
+
   return {
     resolveId(importee, importer) {
-      if (Object.keys(options).length === 0) {
+      // First match is supposed to be the correct one
+      const toReplace = aliasKeys.find(key => startsWith(key, importee));
+
+      if (!toReplace) {
         return null;
       }
 
-      const aliasKeys = Object.keys(options);
-      // TODO: We shouldn't have a case of double aliases. But may need to handle that better
-      const filteredAlias = aliasKeys.filter(value => importee.indexOf(value) === 0)[0];
+      const entry = options[toReplace];
 
-      if (!filteredAlias) {
-        return null;
-      }
+      const updatedId = importee.replace(toReplace, entry);
 
-      const entry = options[filteredAlias];
+      if (startsWith('./', updatedId)) {
+        const directory = path.dirname(importer);
 
-      const updatedId = importee.replace(filteredAlias, entry);
+        // Resolve file names
+        const filePath = path.resolve(directory, updatedId);
+        const match = resolve.map(ext => `${filePath}${ext}`)
+                            .find(exists);
 
-      if (updatedId.indexOf('./') === 0) {
-        const basename = path.basename(importer);
-        const directory = importer.split(basename)[0];
+        if (match) {
+          return match;
+        }
 
-        // TODO: Is there a way not to have the extension being defined explicitly?
-        return path.resolve(directory, updatedId) + '.js';
+        // To keep the previous behaviour we simply return the file path
+        // with extension
+        return filePath + '.js';
       }
 
       return updatedId;

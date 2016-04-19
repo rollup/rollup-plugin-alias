@@ -1,8 +1,85 @@
 import test from 'ava';
-
+import path from 'path';
 import { rollup } from 'rollup';
 import alias from '../dist/rollup-plugin-alias';
 
+test(t => {
+  t.is(typeof alias, 'function');
+});
+
+test(t => {
+  const result = alias();
+  t.is(typeof result, 'object');
+  t.is(typeof result.resolveId, 'function');
+});
+
+test(t => {
+  const result = alias({});
+  t.is(typeof result, 'object');
+  t.is(typeof result.resolveId, 'function');
+});
+
+// Simple aliasing
+test(t => {
+  const result = alias({
+    foo: 'bar',
+    pony: 'paradise',
+  });
+
+  const resolved = result.resolveId('foo', '/src/importer.js');
+  const resolved2 = result.resolveId('pony', '/src/importer.js');
+
+  t.is(resolved, 'bar');
+  t.is(resolved2, 'paradise');
+});
+
+// Local aliasing
+test(t => {
+  const result = alias({
+    foo: './bar',
+    pony: './par/a/di/se',
+  });
+
+  const resolved = result.resolveId('foo', '/src/importer.js');
+  const resolved2 = result.resolveId('pony', '/src/highly/nested/importer.js');
+
+  t.is(resolved, '/src/bar.js');
+  t.is(resolved2, '/src/highly/nested/par/a/di/se.js');
+});
+
+// Test for the resolve property
+test(t => {
+  const result = alias({
+    ember: './folder/hipster',
+    resolve: ['.js', '.jsx'],
+  });
+
+  const resolved = result.resolveId('ember', path.resolve(__dirname, './files/index.js'));
+
+  t.is(resolved, path.resolve(__dirname, './files/folder/hipster.jsx'));
+});
+
+test(t => {
+  const result = alias({
+    resolve: 'i/am/a/file',
+  });
+
+  const resolved = result.resolveId('resolve', '/src/import.js');
+
+  t.is(resolved, 'i/am/a/file');
+});
+
+test(t => {
+  const result = alias({
+    resolve: './i/am/a/local/file',
+  });
+
+  const resolved = result.resolveId('resolve', path.resolve(__dirname, './files/index.js'));
+
+  t.is(resolved, path.resolve(__dirname, './files/i/am/a/local/file.js'));
+});
+
+// Tests in Rollup
 test(t =>
   rollup({
     entry: './files/index.js',
