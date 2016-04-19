@@ -3,7 +3,6 @@ import fs from 'fs';
 
 // Helper functions
 const noop = () => null;
-// const identity = a => a;
 const startsWith = (needle, haystack) => ! haystack.indexOf(needle);
 const exists = uri => {
   try {
