@@ -3,6 +3,7 @@ import path from 'path';
 // Helper functions
 const noop = () => null;
 // const identity = a => a;
+const startsWith = (needle, haystack) => ! haystack.indexOf(needle);
 
 export default function alias(options = {}) {
   const aliasKeys = Object.keys(options);
@@ -16,16 +17,16 @@ export default function alias(options = {}) {
 
   return {
     resolveId(importee, importer) {
-      // TODO: We shouldn't have a case of double aliases. But may need to handle that better
-      const filteredAlias = aliasKeys.filter(value => importee.indexOf(value) === 0)[0];
+      // First match is supposed to be the correct one
+      const toReplace = aliasKeys.find(key => startsWith(key, importee));
 
-      if (!filteredAlias) {
+      if (!toReplace) {
         return null;
       }
 
-      const entry = options[filteredAlias];
+      const entry = options[toReplace];
 
-      const updatedId = importee.replace(filteredAlias, entry);
+      const updatedId = importee.replace(toReplace, entry);
 
       if (updatedId.indexOf('./') === 0) {
         const basename = path.basename(importer);
