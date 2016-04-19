@@ -25,5 +25,22 @@ rollup({
 });
 ```
 
+An optional `resolve` array with file extensions can be provided.
+If present local aliases beginning with `./` will be resolved to existing files:
+
+```javascript
+import { rollup } from 'rollup';
+import alias from 'rollup-plugin-alias';
+
+rollup({
+  entry: './src/index.js',
+  plugins: [alias({
+    resolve: ['.jsx', '.js']
+    foo: './bar',  // Will check for ./bar.jsx and ./bar.js
+  })],
+});
+```
+If not given local aliases will be resolved with a `.js` extension.
+
 ## License
 MIT, see `LICENSE` for more information
