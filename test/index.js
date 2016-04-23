@@ -41,10 +41,32 @@ test(t => {
   });
 
   const resolved = result.resolveId('foo', '/src/importer.js');
-  const resolved2 = result.resolveId('pony', '/src/highly/nested/importer.js');
+  const resolved2 = result.resolveId('foo/baz', '/src/importer.js');
+  const resolved3 = result.resolveId('foo/baz.js', '/src/importer.js');
+  const resolved4 = result.resolveId('pony', '/src/highly/nested/importer.js');
 
   t.is(resolved, '/src/bar.js');
-  t.is(resolved2, '/src/highly/nested/par/a/di/se.js');
+  t.is(resolved2, '/src/bar/baz.js');
+  t.is(resolved3, '/src/bar/baz.js');
+  t.is(resolved4, '/src/highly/nested/par/a/di/se.js');
+});
+
+// Absolute local aliasing
+test(t => {
+  const result = alias({
+    foo: '/bar',
+    pony: '/par/a/di/se.js',
+  });
+
+  const resolved = result.resolveId('foo', '/src/importer.js');
+  const resolved2 = result.resolveId('foo/baz', '/src/importer.js');
+  const resolved3 = result.resolveId('foo/baz.js', '/src/importer.js');
+  const resolved4 = result.resolveId('pony', '/src/highly/nested/importer.js');
+
+  t.is(resolved, '/bar.js');
+  t.is(resolved2, '/bar/baz.js');
+  t.is(resolved3, '/bar/baz.js');
+  t.is(resolved4, '/par/a/di/se.js');
 });
 
 // Test for the resolve property
