@@ -4,6 +4,8 @@ import fs from 'fs';
 // Helper functions
 const noop = () => null;
 const startsWith = (needle, haystack) => ! haystack.indexOf(needle);
+const endsWith = (needle, haystack) => haystack.slice(-needle.length) === needle;
+const isFilePath = id => /^\.?\//.test(id);
 const exists = uri => {
   try {
     return fs.statSync(uri).isFile();
@@ -38,7 +40,7 @@ export default function alias(options = {}) {
 
       const updatedId = importee.replace(toReplace, entry);
 
-      if (startsWith('./', updatedId)) {
+      if (isFilePath(updatedId)) {
         const directory = path.dirname(importer);
 
         // Resolve file names
@@ -52,6 +54,10 @@ export default function alias(options = {}) {
 
         // To keep the previous behaviour we simply return the file path
         // with extension
+        if (endsWith('.js', filePath)) {
+          return filePath;
+        }
+
         return filePath + '.js';
       }
 
