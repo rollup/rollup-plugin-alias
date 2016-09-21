@@ -24,13 +24,16 @@ test(t => {
   const result = alias({
     foo: 'bar',
     pony: 'paradise',
+    './local': 'global',
   });
 
   const resolved = result.resolveId('foo', '/src/importer.js');
   const resolved2 = result.resolveId('pony', '/src/importer.js');
+  const resolved3 = result.resolveId('./local', '/src/importer.js');
 
   t.is(resolved, 'bar');
   t.is(resolved2, 'paradise');
+  t.is(resolved3, 'global');
 });
 
 // Will not confuse modules with similar names
@@ -40,8 +43,10 @@ test(t => {
   });
 
   const resolved = result.resolveId('foo2', '/src/importer.js');
+  const resolved2 = result.resolveId('./someFile.foo', '/src/importer.js');
 
   t.is(resolved, null);
+  t.is(resolved2, null);
 });
 
 // Local aliasing

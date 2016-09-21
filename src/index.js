@@ -5,10 +5,13 @@ import fs from 'fs';
 const noop = () => null;
 const isFilePath = id => /^\.?\//.test(id);
 const startsWith = (needle, haystack) => {
-  if (isFilePath(haystack) || haystack.indexOf('/') !== -1) {
-    return haystack.indexOf(needle) > -1;
+  if (needle === haystack) {
+    return true;
   }
-  return haystack === needle;
+  if (isFilePath(haystack)) {
+    return haystack.replace('./', '').indexOf(needle) === 0;
+  }
+  return haystack.split('/')[0] === needle;
 };
 const endsWith = (needle, haystack) => haystack.slice(-needle.length) === needle;
 const exists = uri => {
