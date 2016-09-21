@@ -33,6 +33,17 @@ test(t => {
   t.is(resolved2, 'paradise');
 });
 
+// Will not confuse modules with similar names
+test(t => {
+  const result = alias({
+    foo: 'bar',
+  });
+
+  const resolved = result.resolveId('foo2', '/src/importer.js');
+
+  t.is(resolved, null);
+});
+
 // Local aliasing
 test(t => {
   const result = alias({
