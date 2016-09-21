@@ -3,17 +3,19 @@ import fs from 'fs';
 
 // Helper functions
 const noop = () => null;
-const isFilePath = id => /^\.?\//.test(id);
-const startsWith = (needle, haystack) => {
-  if (needle === haystack) {
+const matches = (key, importee) => {
+  if (importee.length < key.length) {
+    return false;
+  }
+  if (importee === key) {
     return true;
   }
-  if (isFilePath(haystack)) {
-    return haystack.replace('./', '').indexOf(needle) === 0;
-  }
-  return haystack.split('/')[0] === needle;
+  const importeeStartsWithKey = (importee.indexOf(key) === 0);
+  const importeeHasSlashAfterKey = (importee.substring(key.length)[0] === '/');
+  return importeeStartsWithKey && importeeHasSlashAfterKey;
 };
 const endsWith = (needle, haystack) => haystack.slice(-needle.length) === needle;
+const isFilePath = id => /^\.?\//.test(id);
 const exists = uri => {
   try {
     return fs.statSync(uri).isFile();
@@ -38,7 +40,7 @@ export default function alias(options = {}) {
   return {
     resolveId(importee, importer) {
       // First match is supposed to be the correct one
-      const toReplace = aliasKeys.find(key => startsWith(key, importee));
+      const toReplace = aliasKeys.find(key => matches(key, importee));
 
       if (!toReplace) {
         return null;
