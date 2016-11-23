@@ -108,7 +108,7 @@ test(t => {
 // Tests in Rollup
 test('Tests in Rollup', t =>
   rollup({
-    entry: './test/files/index.js',
+    entry: isWin ? './test/files/index.js' : './files/index.js',
     plugins: [alias({
       fancyNumber: './aliasMe',
       './anotherFancyNumber': './localAliasMe',
