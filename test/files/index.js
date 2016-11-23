@@ -5,3 +5,4 @@ import anotherNumber from './numberFolder/anotherNumber';
 import moreNumbers from 'numberFolder/anotherNumber';
 
 export default fancyNumber + anotherFancyNumber + nonAliased + anotherNumber + moreNumbers;
+

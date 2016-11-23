@@ -2,6 +2,9 @@ import test from 'ava';
 import path from 'path';
 import { rollup } from 'rollup';
 import alias from '../dist/rollup-plugin-alias';
+import os from 'os';
+const isWin = os.platform() === 'win32';
+const root = isWin ? 'F:\\' : '/';
 
 test(t => {
   t.is(typeof alias, 'function');
@@ -40,15 +43,16 @@ test(t => {
     pony: './par/a/di/se',
   });
 
+
   const resolved = result.resolveId('foo', '/src/importer.js');
   const resolved2 = result.resolveId('foo/baz', '/src/importer.js');
   const resolved3 = result.resolveId('foo/baz.js', '/src/importer.js');
   const resolved4 = result.resolveId('pony', '/src/highly/nested/importer.js');
 
-  t.is(resolved, '/src/bar.js');
-  t.is(resolved2, '/src/bar/baz.js');
-  t.is(resolved3, '/src/bar/baz.js');
-  t.is(resolved4, '/src/highly/nested/par/a/di/se.js');
+  t.is(resolved, path.resolve(root, '/src/bar.js'));
+  t.is(resolved2, path.resolve(root, '/src/bar/baz.js'));
+  t.is(resolved3, path.resolve(root, '/src/bar/baz.js'));
+  t.is(resolved4, path.resolve(root, '/src/highly/nested/par/a/di/se.js'));
 });
 
 // Absolute local aliasing
@@ -63,10 +67,10 @@ test(t => {
   const resolved3 = result.resolveId('foo/baz.js', '/src/importer.js');
   const resolved4 = result.resolveId('pony', '/src/highly/nested/importer.js');
 
-  t.is(resolved, '/bar.js');
-  t.is(resolved2, '/bar/baz.js');
-  t.is(resolved3, '/bar/baz.js');
-  t.is(resolved4, '/par/a/di/se.js');
+  t.is(resolved, path.resolve(root, '/bar.js'));
+  t.is(resolved2, path.resolve(root, '/bar/baz.js'));
+  t.is(resolved3, path.resolve(root, '/bar/baz.js'));
+  t.is(resolved4, path.resolve(root, '/par/a/di/se.js'));
 });
 
 // Test for the resolve property
@@ -102,9 +106,9 @@ test(t => {
 });
 
 // Tests in Rollup
-test(t =>
+test('Tests in Rollup', t =>
   rollup({
-    entry: './files/index.js',
+    entry: './test/files/index.js',
     plugins: [alias({
       fancyNumber: './aliasMe',
       './anotherFancyNumber': './localAliasMe',
@@ -112,11 +116,19 @@ test(t =>
       './numberFolder': './folder',
     })],
   }).then(stats => {
-    t.is(stats.modules[0].id.endsWith('/files/nonAliased.js'), true);
-    t.is(stats.modules[1].id.endsWith('/files/aliasMe.js'), true);
-    t.is(stats.modules[2].id.endsWith('/files/localAliasMe.js'), true);
-    t.is(stats.modules[3].id.endsWith('/files/folder/anotherNumber.js'), true);
-    t.is(stats.modules[4].id.endsWith('/files/index.js'), true);
+    if (isWin) {
+      t.is(stats.modules[0].id.endsWith('\\files\\nonAliased.js'), true);
+      t.is(stats.modules[1].id.endsWith('\\files\\aliasMe.js'), true);
+      t.is(stats.modules[2].id.endsWith('\\files\\localAliasMe.js'), true);
+      t.is(stats.modules[3].id.endsWith('\\files\\folder\\anotherNumber.js'), true);
+      t.is(stats.modules[4].id.endsWith('\\files\\index.js'), true);
+    } else {
+      t.is(stats.modules[0].id.endsWith('/files/nonAliased.js'), true);
+      t.is(stats.modules[1].id.endsWith('/files/aliasMe.js'), true);
+      t.is(stats.modules[2].id.endsWith('/files/localAliasMe.js'), true);
+      t.is(stats.modules[3].id.endsWith('/files/folder/anotherNumber.js'), true);
+      t.is(stats.modules[4].id.endsWith('/files/index.js'), true);
+    }
     t.is(stats.modules.length, 5);
   })
 );
