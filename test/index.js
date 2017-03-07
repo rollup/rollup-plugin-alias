@@ -19,22 +19,38 @@ test(t => {
   t.is(typeof result.resolveId, 'function');
 });
 
-// Simple aliasing
-test(t => {
+test('Simple aliasing', t => {
   const result = alias({
     foo: 'bar',
     pony: 'paradise',
+    './local': 'global',
   });
 
   const resolved = result.resolveId('foo', '/src/importer.js');
   const resolved2 = result.resolveId('pony', '/src/importer.js');
+  const resolved3 = result.resolveId('./local', '/src/importer.js');
 
   t.is(resolved, 'bar');
   t.is(resolved2, 'paradise');
+  t.is(resolved3, 'global');
 });
 
-// Local aliasing
-test(t => {
+test('Will not confuse modules with similar names', t => {
+  const result = alias({
+    foo: 'bar',
+    './foo': 'bar',
+  });
+
+  const resolved = result.resolveId('foo2', '/src/importer.js');
+  const resolved2 = result.resolveId('./fooze/bar', '/src/importer.js');
+  const resolved3 = result.resolveId('./someFile.foo', '/src/importer.js');
+
+  t.is(resolved, null);
+  t.is(resolved2, null);
+  t.is(resolved3, null);
+});
+
+test('Local aliasing', t => {
   const result = alias({
     foo: './bar',
     pony: './par/a/di/se',
@@ -51,8 +67,7 @@ test(t => {
   t.is(resolved4, '/src/highly/nested/par/a/di/se.js');
 });
 
-// Absolute local aliasing
-test(t => {
+test('Absolute local aliasing', t => {
   const result = alias({
     foo: '/bar',
     pony: '/par/a/di/se.js',
@@ -69,8 +84,7 @@ test(t => {
   t.is(resolved4, '/par/a/di/se.js');
 });
 
-// Test for the resolve property
-test(t => {
+test('Test for the resolve property', t => {
   const result = alias({
     ember: './folder/hipster',
     resolve: ['.js', '.jsx'],

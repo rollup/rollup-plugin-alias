@@ -3,7 +3,17 @@ import fs from 'fs';
 
 // Helper functions
 const noop = () => null;
-const startsWith = (needle, haystack) => ! haystack.indexOf(needle);
+const matches = (key, importee) => {
+  if (importee.length < key.length) {
+    return false;
+  }
+  if (importee === key) {
+    return true;
+  }
+  const importeeStartsWithKey = (importee.indexOf(key) === 0);
+  const importeeHasSlashAfterKey = (importee.substring(key.length)[0] === '/');
+  return importeeStartsWithKey && importeeHasSlashAfterKey;
+};
 const endsWith = (needle, haystack) => haystack.slice(-needle.length) === needle;
 const isFilePath = id => /^\.?\//.test(id);
 const exists = uri => {
@@ -30,7 +40,7 @@ export default function alias(options = {}) {
   return {
     resolveId(importee, importer) {
       // First match is supposed to be the correct one
-      const toReplace = aliasKeys.find(key => startsWith(key, importee));
+      const toReplace = aliasKeys.find(key => matches(key, importee));
 
       if (!toReplace) {
         return null;
