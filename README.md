@@ -25,7 +25,7 @@ For Webpack users: This is a plugin to mimic the `resolve.alias` functionality i
 
 ## Installation
 ```
-npm install rollup-plugin-alias
+$ npm install rollup-plugin-alias
 ```
 
 ## Usage
