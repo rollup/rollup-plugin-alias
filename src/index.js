@@ -46,7 +46,7 @@ export default function alias(options = {}) {
         // Resolve file names
         const filePath = path.resolve(directory, updatedId);
         const match = resolve.reduce((paths, ext) => {
-          paths.push(`${filePath}/index.${ext}`);
+          paths.push(path.join(filePath, `index.${ext}`));
           paths.push(`${filePath}${ext}`);
           return paths;
         }, []).find(exists);
