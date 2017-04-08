@@ -30,16 +30,6 @@ const exists = uri => {
   }
 };
 
-const getVolume = id => {
-  let volume = '';
-
-  if (IS_WINDOWS && typeof id === 'string') {
-    [volume] = id.match(VOLUME) || [''];
-  }
-
-  return volume;
-};
-
 const normalizeId = id => {
   if (IS_WINDOWS && typeof id === 'string') {
     return slash(id.replace(VOLUME, ''));
@@ -63,7 +53,6 @@ export default function alias(options = {}) {
 
   return {
     resolveId(importee, importer) {
-      const volume = getVolume(importee) || getVolume(importer);
       const importeeId = normalizeId(importee);
       const importerId = normalizeId(importer);
 
@@ -87,19 +76,19 @@ export default function alias(options = {}) {
                             .find(exists);
 
         if (match) {
-          return path.join(volume, match);
+          return match;
         }
 
         // To keep the previous behaviour we simply return the file path
         // with extension
         if (endsWith('.js', filePath)) {
-          return path.join(volume, filePath);
+          return filePath;
         }
 
-        return path.join(volume, filePath + '.js');
+        return filePath + '.js';
       }
 
-      return path.join(volume, updatedId);
+      return updatedId;
     },
   };
 }
