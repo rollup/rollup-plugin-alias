@@ -1,5 +1,11 @@
-import path from 'path';
+import { posix as path } from 'path';
+import { platform } from 'os';
 import fs from 'fs';
+
+import slash from 'slash';
+
+const VOLUME = /^([A-Z]:)/;
+const IS_WINDOWS = platform() === 'win32';
 
 // Helper functions
 const noop = () => null;
@@ -24,6 +30,14 @@ const exists = uri => {
   }
 };
 
+const normalizeId = id => {
+  if (IS_WINDOWS && typeof id === 'string') {
+    return slash(id.replace(VOLUME, ''));
+  }
+
+  return id;
+};
+
 export default function alias(options = {}) {
   const hasResolve = Array.isArray(options.resolve);
   const resolve = hasResolve ? options.resolve : ['.js'];
@@ -39,8 +53,11 @@ export default function alias(options = {}) {
 
   return {
     resolveId(importee, importer) {
+      const importeeId = normalizeId(importee);
+      const importerId = normalizeId(importer);
+
       // First match is supposed to be the correct one
-      const toReplace = aliasKeys.find(key => matches(key, importee));
+      const toReplace = aliasKeys.find(key => matches(key, importeeId));
 
       if (!toReplace) {
         return null;
@@ -48,10 +65,10 @@ export default function alias(options = {}) {
 
       const entry = options[toReplace];
 
-      const updatedId = importee.replace(toReplace, entry);
+      const updatedId = importeeId.replace(toReplace, entry);
 
       if (isFilePath(updatedId)) {
-        const directory = path.dirname(importer);
+        const directory = path.dirname(importerId);
 
         // Resolve file names
         const filePath = path.resolve(directory, updatedId);

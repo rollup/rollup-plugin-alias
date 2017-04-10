@@ -1,7 +1,10 @@
 import test from 'ava';
-import path from 'path';
+import { posix as path } from 'path';
 import { rollup } from 'rollup';
 import alias from '../dist/rollup-plugin-alias';
+import slash from 'slash';
+
+const DIRNAME = slash(__dirname.replace(/^([A-Z]:)/, ''));
 
 test(t => {
   t.is(typeof alias, 'function');
@@ -90,9 +93,9 @@ test('Test for the resolve property', t => {
     resolve: ['.js', '.jsx'],
   });
 
-  const resolved = result.resolveId('ember', path.resolve(__dirname, './files/index.js'));
+  const resolved = result.resolveId('ember', path.resolve(DIRNAME, './files/index.js'));
 
-  t.is(resolved, path.resolve(__dirname, './files/folder/hipster.jsx'));
+  t.is(resolved, path.resolve(DIRNAME, './files/folder/hipster.jsx'));
 });
 
 test(t => {
@@ -110,9 +113,9 @@ test(t => {
     resolve: './i/am/a/local/file',
   });
 
-  const resolved = result.resolveId('resolve', path.resolve(__dirname, './files/index.js'));
+  const resolved = result.resolveId('resolve', path.resolve(DIRNAME, './files/index.js'));
 
-  t.is(resolved, path.resolve(__dirname, './files/i/am/a/local/file.js'));
+  t.is(resolved, path.resolve(DIRNAME, './files/i/am/a/local/file.js'));
 });
 
 // Tests in Rollup
