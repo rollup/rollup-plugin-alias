@@ -65,7 +65,7 @@ export default function alias(options = {}) {
 
       const entry = options[toReplace];
 
-      const updatedId = importeeId.replace(toReplace, entry);
+      const updatedId = normalizeId(importeeId.replace(toReplace, entry));
 
       if (isFilePath(updatedId)) {
         const directory = path.dirname(importerId);

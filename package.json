@@ -46,5 +46,7 @@
     "rollup-babel-lib-bundler": "^2.2.4",
     "slash": "^1.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "slash": "^1.0.0"
+  }
 }
