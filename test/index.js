@@ -113,10 +113,9 @@ test(t => {
   const result = alias({
     resolve: 'some_libs/some_directory/some_file_alias',
   });
-
   const resolved = result.resolveId('resolve', '/src/import.js');
-
-  t.is(resolved, path.resolve(process.cwd(), SOME_NODE_MODULE_PATH));
+  const absPath = slash(process.cwd().replace(/^([A-Z]:)/, ''));
+  t.is(resolved, slash(path.resolve(absPath, SOME_NODE_MODULE_PATH)));
 });
 
 test(t => {

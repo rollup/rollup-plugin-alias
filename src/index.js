@@ -29,18 +29,17 @@ const exists = uri => {
     return false;
   }
 };
-const resolveNodeModules = (id) => {
-  const nodeModulesPath = path.resolve(process.cwd(), 'node_modules');
-  const filePath = path.resolve(nodeModulesPath, id);
-  return exists(filePath) ? filePath : false;
-};
-
 const normalizeId = id => {
   if (IS_WINDOWS && typeof id === 'string') {
     return slash(id.replace(VOLUME, ''));
   }
 
   return id;
+};
+const resolveNodeModules = (id) => {
+  const nodeModulesPath = path.resolve(normalizeId(process.cwd()), './node_modules');
+  const filePath = path.resolve(nodeModulesPath, id);
+  return exists(filePath) ? filePath : false;
 };
 
 export default function alias(options = {}) {
