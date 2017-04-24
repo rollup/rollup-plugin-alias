@@ -29,6 +29,11 @@ const exists = uri => {
     return false;
   }
 };
+const resolveNodeModules = (id) => {
+  const nodeModulesPath = path.resolve(process.cwd(), 'node_modules');
+  const filePath = path.resolve(nodeModulesPath, id);
+  return exists(filePath) ? filePath : false;
+};
 
 const normalizeId = id => {
   if (IS_WINDOWS && typeof id === 'string') {
@@ -87,6 +92,9 @@ export default function alias(options = {}) {
 
         return filePath + '.js';
       }
+
+      const nodeModuleFile = resolveNodeModules(updatedId);
+      if (nodeModuleFile) return nodeModuleFile;
 
       return updatedId;
     },
