@@ -5,6 +5,7 @@ import alias from '../dist/rollup-plugin-alias';
 import slash from 'slash';
 
 const DIRNAME = slash(__dirname.replace(/^([A-Z]:)/, ''));
+const SOME_NODE_MODULE_PATH = 'node_modules/some_libs/some_directory/some_file_alias';
 
 test(t => {
   t.is(typeof alias, 'function');
@@ -110,6 +111,16 @@ test(t => {
 
 test(t => {
   const result = alias({
+    resolve: 'some_libs/some_directory/some_file_alias',
+  });
+
+  const resolved = result.resolveId('resolve', '/src/import.js');
+
+  t.is(resolved, path.resolve(process.cwd(), SOME_NODE_MODULE_PATH));
+});
+
+test(t => {
+  const result = alias({
     resolve: './i/am/a/local/file',
   });
 
@@ -127,13 +138,15 @@ test(t =>
       './anotherFancyNumber': './localAliasMe',
       numberFolder: './folder',
       './numberFolder': './folder',
+      someModule: 'some_libs/some_directory/some_file_alias',
     })],
   }).then(stats => {
     t.is(stats.modules[0].id.endsWith('/files/nonAliased.js'), true);
     t.is(stats.modules[1].id.endsWith('/files/aliasMe.js'), true);
     t.is(stats.modules[2].id.endsWith('/files/localAliasMe.js'), true);
     t.is(stats.modules[3].id.endsWith('/files/folder/anotherNumber.js'), true);
-    t.is(stats.modules[4].id.endsWith('/files/index.js'), true);
-    t.is(stats.modules.length, 5);
+    t.is(stats.modules[4].id.endsWith(SOME_NODE_MODULE_PATH), true);
+    t.is(stats.modules[5].id.endsWith('/files/index.js'), true);
+    t.is(stats.modules.length, 6);
   })
 );
