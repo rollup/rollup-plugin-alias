@@ -1,11 +1,6 @@
-import { posix as path } from 'path';
-import { platform } from 'os';
+import path from 'path';
 import fs from 'fs';
-
 import slash from 'slash';
-
-const VOLUME = /^([A-Z]:)/;
-const IS_WINDOWS = platform() === 'win32';
 
 // Helper functions
 const noop = () => null;
@@ -21,7 +16,8 @@ const matches = (key, importee) => {
   return importeeStartsWithKey && importeeHasSlashAfterKey;
 };
 const endsWith = (needle, haystack) => haystack.slice(-needle.length) === needle;
-const isFilePath = id => /^\.?\//.test(id);
+const isAbsolutePath = id => /^(?:\/|(?:[A-Za-z]:)?[\\\/])/.test(id);
+const isRelativePath = id => /^\.?\.[\\\/]/.test(id);
 const exists = uri => {
   try {
     return fs.statSync(uri).isFile();
@@ -29,14 +25,7 @@ const exists = uri => {
     return false;
   }
 };
-
-const normalizeId = id => {
-  if (IS_WINDOWS && typeof id === 'string') {
-    return slash(id.replace(VOLUME, ''));
-  }
-
-  return id;
-};
+const normalizeId = id => slash(id);
 
 export default function alias(options = {}) {
   const hasResolve = Array.isArray(options.resolve);
@@ -53,8 +42,8 @@ export default function alias(options = {}) {
 
   return {
     resolveId(importee, importer) {
-      const importeeId = normalizeId(importee);
-      const importerId = normalizeId(importer);
+      const importeeId = importee;
+      const importerId = importer;
 
       // First match is supposed to be the correct one
       const toReplace = aliasKeys.find(key => matches(key, importeeId));
@@ -67,25 +56,23 @@ export default function alias(options = {}) {
 
       const updatedId = importeeId.replace(toReplace, entry);
 
-      if (isFilePath(updatedId)) {
+      if (isRelativePath(updatedId) || isAbsolutePath(updatedId)) {
         const directory = path.dirname(importerId);
 
         // Resolve file names
-        const filePath = path.resolve(directory, updatedId);
+        let filePath = path.resolve(directory, updatedId);
         const match = resolve.map(ext => `${filePath}${ext}`)
                             .find(exists);
 
         if (match) {
-          return match;
+          filePath = match;
+        } else if (!endsWith('.js', filePath)) {
+          // To keep the previous behaviour we simply return the file path
+          // with extension
+          filePath = filePath + '.js';
         }
 
-        // To keep the previous behaviour we simply return the file path
-        // with extension
-        if (endsWith('.js', filePath)) {
-          return filePath;
-        }
-
-        return filePath + '.js';
+        return normalizeId(filePath);
       }
 
       return updatedId;
