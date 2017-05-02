@@ -58,7 +58,7 @@ export default function alias(options = {}) {
         return null;
       }
 
-      const entry = options[toReplace];
+      const entry = normalizeId(options[toReplace]);
 
       const updatedId = importeeId.replace(toReplace, entry);
 
