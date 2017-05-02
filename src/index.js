@@ -63,10 +63,18 @@ export default function alias(options = {}) {
       const updatedId = importeeId.replace(toReplace, entry);
 
       if (isRelativePath(updatedId) || isAbsolutePath(updatedId)) {
-        const directory = path.dirname(importerId);
+        let filePath;
+        if (isRelativePath(updatedId) && importer === undefined) {
+          // Cannot handle this, so return null
+          return null;
+        } else if (isRelativePath(updatedId) && importer !== undefined) {
+          // Resolve file names
+          filePath = path.resolve(path.dirname(importerId), updatedId);
+        } else {
+          // Absolute path doesn't need resolve
+          filePath = updatedId;
+        }
 
-        // Resolve file names
-        let filePath = path.resolve(directory, updatedId);
         const match = resolve.map(ext => `${filePath}${ext}`)
                             .find(exists);
 

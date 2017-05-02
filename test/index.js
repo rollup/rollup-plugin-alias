@@ -154,3 +154,29 @@ test(t =>
     t.is(stats.modules.length, 5);
   })
 );
+
+test('Relative local aliasing in rollup entry', t =>
+  rollup({
+    entry: 'src/aliasMe.js',
+    plugins: [alias({
+      src: './files',
+    })],
+  }).then(() => {
+    t.fail();
+  }).catch(() => {
+    t.pass();
+  })
+);
+
+test('Absolute local aliasing in rollup entry', t =>
+  rollup({
+    entry: 'src/aliasMe.js',
+    plugins: [alias({
+      src: path.resolve('./files'),
+    })],
+  }).then(() => {
+    t.pass();
+  }).catch(() => {
+    t.fail();
+  })
+);
