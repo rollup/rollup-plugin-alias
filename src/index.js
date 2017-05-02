@@ -25,7 +25,13 @@ const exists = uri => {
     return false;
   }
 };
-const normalizeId = id => slash(id);
+const normalizeId = id => {
+  if (typeof id === 'string') {
+    return slash(id);
+  }
+
+  return id;
+};
 
 export default function alias(options = {}) {
   const hasResolve = Array.isArray(options.resolve);
@@ -42,8 +48,8 @@ export default function alias(options = {}) {
 
   return {
     resolveId(importee, importer) {
-      const importeeId = importee;
-      const importerId = importer;
+      const importeeId = normalizeId(importee);
+      const importerId = normalizeId(importer);
 
       // First match is supposed to be the correct one
       const toReplace = aliasKeys.find(key => matches(key, importeeId));
