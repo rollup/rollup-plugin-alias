@@ -1,10 +1,11 @@
 import test from 'ava';
-import { posix as path } from 'path';
+import paltformPath, { posix as path } from 'path';
 import { rollup } from 'rollup';
 import alias from '../dist/rollup-plugin-alias';
 import slash from 'slash';
 
-const DIRNAME = slash(__dirname.replace(/^([A-Z]:)/, ''));
+const normalizePath = (pathToNormalize) => slash(pathToNormalize.replace(/^([A-Z]:)/, ''));
+const DIRNAME = normalizePath(__dirname);
 
 test(t => {
   t.is(typeof alias, 'function');
@@ -116,6 +117,43 @@ test(t => {
   const resolved = result.resolveId('resolve', path.resolve(DIRNAME, './files/index.js'));
 
   t.is(resolved, path.resolve(DIRNAME, './files/i/am/a/local/file.js'));
+});
+
+// this test with old behaviour will fail on windows and pass on Uinx-Like platforms
+test('Platform path.resolve(\'file-without-extension\') aliasing', t => {
+  // this what used in React and Vue
+  const result = alias({
+    test: paltformPath.resolve('./files/aliasMe'),
+  });
+
+  const resolved = result.resolveId('test', path.resolve(DIRNAME, './files/index.js'));
+
+  t.is(resolved, paltformPath.resolve('./files/aliasMe.js'));
+});
+
+// this test with old behaviour will fail on windows and Uinx-Like platforms
+test('Windows absolute path aliasing', t => {
+  const result = alias({
+    resolve: 'E:\\react\\node_modules\\fbjs\\lib\\warning',
+  });
+
+  const resolved = result.resolveId('resolve', path.resolve(DIRNAME, './files/index.js'));
+
+  t.is(
+    normalizePath(resolved),
+    normalizePath('E:\\react\\node_modules\\fbjs\\lib\\warning.js')
+  );
+});
+
+test('Platform path.resolve(\'file-with.ext\') aliasing', t => {
+  const result = alias({
+    test: paltformPath.resolve('./files/folder/hipster.jsx'),
+    resolve: ['.js', '.jsx'],
+  });
+
+  const resolved = result.resolveId('test', path.resolve(DIRNAME, './files/index.js'));
+
+  t.is(resolved, paltformPath.resolve('./files/folder/hipster.jsx'));
 });
 
 // Tests in Rollup
