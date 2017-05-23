@@ -1,4 +1,4 @@
-import platformPath, { posix as path } from 'path';
+import path, { posix } from 'path';
 import { platform } from 'os';
 import fs from 'fs';
 
@@ -68,10 +68,10 @@ export default function alias(options = {}) {
       let updatedId = normalizeId(importeeId.replace(toReplace, entry));
 
       if (isFilePath(updatedId)) {
-        const directory = path.dirname(importerId);
+        const directory = posix.dirname(importerId);
 
         // Resolve file names
-        const filePath = path.resolve(directory, updatedId);
+        const filePath = posix.resolve(directory, updatedId);
         const match = resolve.map(ext => (endsWith(ext, filePath) ? filePath : `${filePath}${ext}`))
                             .find(exists);
 
@@ -86,11 +86,11 @@ export default function alias(options = {}) {
         }
       }
 
-      // if alias is windows absoulate path return platform
-      // resolved path or rollup on windows will throw:
+      // if alias is windows absoulate path return resolved path or
+      // rollup on windows will throw:
       //  [TypeError: Cannot read property 'specifier' of undefined]
       if (VOLUME.test(entry)) {
-        return platformPath.resolve(updatedId);
+        return path.resolve(updatedId);
       }
 
       return updatedId;

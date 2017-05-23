@@ -1,5 +1,5 @@
 import test from 'ava';
-import paltformPath, { posix as path } from 'path';
+import path, { posix } from 'path';
 import { rollup } from 'rollup';
 import alias from '../dist/rollup-plugin-alias';
 import slash from 'slash';
@@ -94,9 +94,9 @@ test('Test for the resolve property', t => {
     resolve: ['.js', '.jsx'],
   });
 
-  const resolved = result.resolveId('ember', path.resolve(DIRNAME, './files/index.js'));
+  const resolved = result.resolveId('ember', posix.resolve(DIRNAME, './files/index.js'));
 
-  t.is(resolved, path.resolve(DIRNAME, './files/folder/hipster.jsx'));
+  t.is(resolved, posix.resolve(DIRNAME, './files/folder/hipster.jsx'));
 });
 
 test(t => {
@@ -114,21 +114,21 @@ test(t => {
     resolve: './i/am/a/local/file',
   });
 
-  const resolved = result.resolveId('resolve', path.resolve(DIRNAME, './files/index.js'));
+  const resolved = result.resolveId('resolve', posix.resolve(DIRNAME, './files/index.js'));
 
-  t.is(resolved, path.resolve(DIRNAME, './files/i/am/a/local/file.js'));
+  t.is(resolved, posix.resolve(DIRNAME, './files/i/am/a/local/file.js'));
 });
 
 // this test with old behaviour will fail on windows and pass on Uinx-Like platforms
 test('Platform path.resolve(\'file-without-extension\') aliasing', t => {
   // this what used in React and Vue
   const result = alias({
-    test: paltformPath.resolve('./files/aliasMe'),
+    test: path.resolve('./files/aliasMe'),
   });
 
-  const resolved = result.resolveId('test', path.resolve(DIRNAME, './files/index.js'));
+  const resolved = result.resolveId('test', posix.resolve(DIRNAME, './files/index.js'));
 
-  t.is(resolved, paltformPath.resolve('./files/aliasMe.js'));
+  t.is(resolved, path.resolve('./files/aliasMe.js'));
 });
 
 // this test with old behaviour will fail on windows and Uinx-Like platforms
@@ -137,7 +137,7 @@ test('Windows absolute path aliasing', t => {
     resolve: 'E:\\react\\node_modules\\fbjs\\lib\\warning',
   });
 
-  const resolved = result.resolveId('resolve', path.resolve(DIRNAME, './files/index.js'));
+  const resolved = result.resolveId('resolve', posix.resolve(DIRNAME, './files/index.js'));
 
   t.is(
     normalizePath(resolved),
@@ -147,13 +147,13 @@ test('Windows absolute path aliasing', t => {
 
 test('Platform path.resolve(\'file-with.ext\') aliasing', t => {
   const result = alias({
-    test: paltformPath.resolve('./files/folder/hipster.jsx'),
+    test: path.resolve('./files/folder/hipster.jsx'),
     resolve: ['.js', '.jsx'],
   });
 
-  const resolved = result.resolveId('test', path.resolve(DIRNAME, './files/index.js'));
+  const resolved = result.resolveId('test', posix.resolve(DIRNAME, './files/index.js'));
 
-  t.is(resolved, paltformPath.resolve('./files/folder/hipster.jsx'));
+  t.is(resolved, path.resolve('./files/folder/hipster.jsx'));
 });
 
 // Tests in Rollup
