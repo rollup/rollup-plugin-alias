@@ -29,13 +29,17 @@ const exists = uri => {
     return false;
   }
 };
-
 const normalizeId = id => {
   if (IS_WINDOWS && typeof id === 'string') {
     return slash(id.replace(VOLUME, ''));
   }
 
   return id;
+};
+const resolveNodeModules = (id) => {
+  const nodeModulesPath = path.resolve(normalizeId(process.cwd()), './node_modules');
+  const filePath = path.resolve(nodeModulesPath, id);
+  return exists(filePath) ? filePath : false;
 };
 
 export default function alias(options = {}) {
@@ -87,6 +91,9 @@ export default function alias(options = {}) {
 
         return filePath + '.js';
       }
+
+      const nodeModuleFile = resolveNodeModules(updatedId);
+      if (nodeModuleFile) return nodeModuleFile;
 
       return updatedId;
     },
