@@ -51,8 +51,8 @@ import alias from 'rollup-plugin-alias';
 rollup({
   entry: './src/index.js',
   plugins: [alias({
-    resolve: ['.jsx', '.js']
-    foo: './bar',  // Will check for ./bar.jsx and ./bar.js
+    resolve: ['.jsx', '.js'],
+    foo: './bar'  // Will check for ./bar.jsx and ./bar.js
   })],
 });
 ```
