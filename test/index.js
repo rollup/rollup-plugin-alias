@@ -87,6 +87,16 @@ test('Absolute local aliasing', t => {
   t.is(resolved4, '/par/a/di/se.js');
 });
 
+test('Leaves entry file untouched if matches alias', t => {
+  const result = alias({
+    abacaxi: './abacaxi',
+  });
+
+  const resolved = result.resolveId('abacaxi/entry.js', undefined);
+
+  t.is(resolved, null);
+});
+
 test('Test for the resolve property', t => {
   const result = alias({
     ember: './folder/hipster',
