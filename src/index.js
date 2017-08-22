@@ -21,7 +21,7 @@ const matches = (key, importee) => {
   return importeeStartsWithKey && importeeHasSlashAfterKey;
 };
 const endsWith = (needle, haystack) => haystack.slice(-needle.length) === needle;
-const isFilePath = id => /^\.?\//.test(id);
+const isFilePath = id => /^(\.|\w:|)?\//.test(id);
 const exists = uri => {
   try {
     return fs.statSync(uri).isFile();
@@ -65,7 +65,7 @@ export default function alias(options = {}) {
 
       const entry = options[toReplace];
 
-      const updatedId = importeeId.replace(toReplace, entry);
+      const updatedId = importeeId.replace(toReplace, entry).split(path.sep).join('/');
 
       if (isFilePath(updatedId)) {
         const directory = path.dirname(importerId);
