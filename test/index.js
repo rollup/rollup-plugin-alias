@@ -144,7 +144,7 @@ test('Windows absolute path aliasing', t => {
     normalizePath('E:\\react\\node_modules\\fbjs\\lib\\warning.js')
   );
 });
-
+// test alaising with resolved paths
 test('Platform path.resolve(\'file-with.ext\') aliasing', t => {
   const result = alias({
     test: path.resolve('./files/folder/hipster.jsx'),
