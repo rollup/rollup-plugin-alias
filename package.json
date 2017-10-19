@@ -3,6 +3,7 @@
   "version": "1.3.1",
   "description": "Resolves aliases with Rollup",
   "main": "dist/rollup-plugin-alias.js",
+  "module": "dist/rollup-plugin-alias.es2015.js",
   "jsnext:main": "dist/rollup-plugin-alias.es2015.js",
   "scripts": {
     "prebuild": "rimraf dist",
