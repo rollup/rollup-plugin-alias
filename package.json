@@ -7,7 +7,7 @@
   "jsnext:main": "dist/rollup-plugin-alias.es2015.js",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "rollup-babel-lib-bundler -f cjs,es6 src/index.js",
+    "build": "rollup -c",
     "prepublish": "npm run build",
     "lint": "eslint .",
     "pretest": "npm-run-all -p build lint",
@@ -36,15 +36,13 @@
   "homepage": "https://github.com/frostney/rollup-plugin-aliar#readme",
   "devDependencies": {
     "ava": "^0.12.0",
-    "babel-preset-es2015-loose-rollup": "^7.0.0",
     "coveralls": "^2.11.8",
     "eslint": "^2.2.0",
     "eslint-config-airbnb": "^6.0.2",
     "npm-run-all": "^1.5.1",
     "nyc": "^5.6.0",
     "rimraf": "^2.5.2",
-    "rollup": "^0.25.4",
-    "rollup-babel-lib-bundler": "^2.2.4"
+    "rollup": "^0.50.0"
   },
   "dependencies": {
     "slash": "^1.0.0"

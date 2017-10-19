@@ -129,7 +129,6 @@ test(t => {
   t.is(resolved, posix.resolve(DIRNAME, './files/i/am/a/local/file.js'));
 });
 
-// this test with old behaviour will fail on windows and pass on Uinx-Like platforms
 test('Platform path.resolve(\'file-without-extension\') aliasing', t => {
   // this what used in React and Vue
   const result = alias({
@@ -141,7 +140,6 @@ test('Platform path.resolve(\'file-without-extension\') aliasing', t => {
   t.is(resolved, path.resolve('./files/aliasMe.js'));
 });
 
-// this test with old behaviour will fail on windows and Uinx-Like platforms
 test('Windows absolute path aliasing', t => {
   const result = alias({
     resolve: 'E:\\react\\node_modules\\fbjs\\lib\\warning',
@@ -154,7 +152,7 @@ test('Windows absolute path aliasing', t => {
     normalizePath('E:\\react\\node_modules\\fbjs\\lib\\warning.js')
   );
 });
-// test alaising with resolved paths
+
 test('Platform path.resolve(\'file-with.ext\') aliasing', t => {
   const result = alias({
     test: path.resolve('./files/folder/hipster.jsx'),
