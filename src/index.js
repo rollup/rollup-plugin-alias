@@ -72,8 +72,10 @@ export default function alias(options = {}) {
 
         // Resolve file names
         const filePath = path.resolve(directory, updatedId);
-        const match = resolve.map(ext => `${filePath}${ext}`)
-                            .find(exists);
+        const match = resolve
+          .map(ext => [`${filePath}${ext}`, `${filePath}/index${ext}`])
+          .reduce((variants, variant) => variants.concat(variant), [])
+          .find(exists);
 
         if (match) {
           return match;

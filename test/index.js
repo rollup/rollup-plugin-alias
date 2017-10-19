@@ -147,3 +147,13 @@ test(t =>
     t.is(stats.modules.length, 5);
   })
 );
+
+test('Resolving directories via index.js', t => {
+  const result = alias({
+    folder: './folder',
+  });
+
+  const resolved = result.resolveId('folder', path.resolve(DIRNAME, './files/aliasMe.js'));
+
+  t.is(resolved, path.resolve(DIRNAME, './files/folder/index.js'));
+});
