@@ -59,7 +59,7 @@ export default function alias(options = {}) {
       // First match is supposed to be the correct one
       const toReplace = aliasKeys.find(key => matches(key, importeeId));
 
-      if (!toReplace) {
+      if (!toReplace || !importerId) {
         return null;
       }
 
