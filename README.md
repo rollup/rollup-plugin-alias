@@ -30,31 +30,31 @@ $ npm install rollup-plugin-alias
 
 ## Usage
 ```javascript
-import { rollup } from 'rollup';
+// rollup.config.js
 import alias from 'rollup-plugin-alias';
 
-rollup({
-  entry: './src/index.js',
+export default {
+  input: './src/index.js',
   plugins: [alias({
     somelibrary: './mylocallibrary'
   })],
-});
+};
 ```
 
 An optional `resolve` array with file extensions can be provided.
 If present local aliases beginning with `./` will be resolved to existing files:
 
 ```javascript
-import { rollup } from 'rollup';
+// rollup.config.js
 import alias from 'rollup-plugin-alias';
 
-rollup({
-  entry: './src/index.js',
+export default {
+  input: './src/index.js',
   plugins: [alias({
     resolve: ['.jsx', '.js'],
     foo: './bar'  // Will check for ./bar.jsx and ./bar.js
   })],
-});
+};
 ```
 If not given local aliases will be resolved with a `.js` extension.
 
