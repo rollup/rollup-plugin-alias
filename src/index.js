@@ -1,4 +1,4 @@
-import { posix as path } from 'path';
+import path, { posix } from 'path';
 import { platform } from 'os';
 import fs from 'fs';
 
@@ -31,7 +31,7 @@ const exists = uri => {
 };
 
 const normalizeId = id => {
-  if (IS_WINDOWS && typeof id === 'string') {
+  if ((IS_WINDOWS && typeof id === 'string') || VOLUME.test(id)) {
     return slash(id.replace(VOLUME, ''));
   }
 
@@ -65,27 +65,32 @@ export default function alias(options = {}) {
 
       const entry = options[toReplace];
 
-      const updatedId = importeeId.replace(toReplace, entry);
+      let updatedId = normalizeId(importeeId.replace(toReplace, entry));
 
       if (isFilePath(updatedId)) {
-        const directory = path.dirname(importerId);
+        const directory = posix.dirname(importerId);
 
         // Resolve file names
-        const filePath = path.resolve(directory, updatedId);
-        const match = resolve.map(ext => `${filePath}${ext}`)
+        const filePath = posix.resolve(directory, updatedId);
+        const match = resolve.map(ext => (endsWith(ext, filePath) ? filePath : `${filePath}${ext}`))
                             .find(exists);
 
         if (match) {
-          return match;
-        }
-
+          updatedId = match;
         // To keep the previous behaviour we simply return the file path
         // with extension
-        if (endsWith('.js', filePath)) {
-          return filePath;
+        } else if (endsWith('.js', filePath)) {
+          updatedId = filePath;
+        } else {
+          updatedId = filePath + '.js';
         }
+      }
 
-        return filePath + '.js';
+      // if alias is windows absoulate path return resolved path or
+      // rollup on windows will throw:
+      //  [TypeError: Cannot read property 'specifier' of undefined]
+      if (VOLUME.test(entry)) {
+        return path.resolve(updatedId);
       }
 
       return updatedId;
