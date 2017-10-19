@@ -175,11 +175,11 @@ test(t =>
       './numberFolder': './folder',
     })],
   }).then(stats => {
-    t.is(stats.modules[0].id.endsWith('/files/nonAliased.js'), true);
-    t.is(stats.modules[1].id.endsWith('/files/aliasMe.js'), true);
-    t.is(stats.modules[2].id.endsWith('/files/localAliasMe.js'), true);
-    t.is(stats.modules[3].id.endsWith('/files/folder/anotherNumber.js'), true);
-    t.is(stats.modules[4].id.endsWith('/files/index.js'), true);
+    t.is(stats.modules[0].id.endsWith(path.normalize('/files/nonAliased.js')), true);
+    t.is(stats.modules[1].id.endsWith(path.normalize('/files/aliasMe.js')), true);
+    t.is(stats.modules[2].id.endsWith(path.normalize('/files/localAliasMe.js')), true);
+    t.is(stats.modules[3].id.endsWith(path.normalize('/files/folder/anotherNumber.js')), true);
+    t.is(stats.modules[4].id.endsWith(path.normalize('/files/index.js')), true);
     t.is(stats.modules.length, 5);
   })
 );
