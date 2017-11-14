@@ -4,7 +4,7 @@ import fs from 'fs';
 
 import slash from 'slash';
 
-const VOLUME = /^([A-Z]:)/;
+const VOLUME = /^([A-Za-z]:)/;
 const IS_WINDOWS = platform() === 'win32';
 
 // Helper functions
