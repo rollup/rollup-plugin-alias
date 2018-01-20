@@ -72,6 +72,7 @@ export default function alias(options = {}) {
 
         // Resolve file names
         const filePath = posix.resolve(directory, updatedId);
+
         const match = resolve.map(ext => (endsWith(ext, filePath) ? filePath : `${filePath}${ext}`))
                             .find(exists);
 
@@ -81,6 +82,9 @@ export default function alias(options = {}) {
         // with extension
         } else if (endsWith('.js', filePath)) {
           updatedId = filePath;
+        // See if filePath + /index.js exists, then use it
+        } else if (fs.existsSync(posix.join(filePath, 'index.js'))) {
+          updatedId = posix.join(filePath, 'index.js');
         } else {
           updatedId = filePath + '.js';
         }

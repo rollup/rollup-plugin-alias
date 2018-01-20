@@ -164,6 +164,16 @@ test('Platform path.resolve(\'file-with.ext\') aliasing', t => {
   t.is(resolved, path.resolve('./files/folder/hipster.jsx'));
 });
 
+test('index.js resolve', t => {
+  const result = alias({
+    test: path.resolve('./files/folder'),
+  });
+
+  const resolved = result.resolveId('test', posix.resolve(DIRNAME, './files/index.js'));
+
+  t.is(resolved, path.resolve('./files/folder/index.js'));
+});
+
 // Tests in Rollup
 test(t =>
   rollup({
@@ -179,7 +189,8 @@ test(t =>
     t.is(stats.modules[1].id.endsWith(path.normalize('/files/aliasMe.js')), true);
     t.is(stats.modules[2].id.endsWith(path.normalize('/files/localAliasMe.js')), true);
     t.is(stats.modules[3].id.endsWith(path.normalize('/files/folder/anotherNumber.js')), true);
-    t.is(stats.modules[4].id.endsWith(path.normalize('/files/index.js')), true);
-    t.is(stats.modules.length, 5);
+    t.is(stats.modules[4].id.endsWith(path.normalize('/files/folder/index.js')), true);
+    t.is(stats.modules[5].id.endsWith(path.normalize('/files/index.js')), true);
+    t.is(stats.modules.length, 6);
   })
 );
