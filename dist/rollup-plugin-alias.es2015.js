@@ -1,7 +1,6 @@
 import path, { posix } from 'path';
 import { platform } from 'os';
 import fs from 'fs';
-
 import slash from 'slash';
 
 const VOLUME = /^([A-Z]:)/;
@@ -38,7 +37,7 @@ const normalizeId = id => {
   return id;
 };
 
-export default function alias(options = {}) {
+function alias(options = {}) {
   const hasResolve = Array.isArray(options.resolve);
   const resolve = hasResolve ? options.resolve : ['.js'];
   const aliasKeys = hasResolve ?
@@ -101,3 +100,5 @@ export default function alias(options = {}) {
     },
   };
 }
+
+export default alias;
