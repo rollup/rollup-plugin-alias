@@ -2,7 +2,7 @@ import path, { posix } from 'path';
 import { platform } from 'os';
 import fs from 'fs';
 
-import resolvePlugin from 'rollup-plugin-node-resolve'
+import resolvePlugin from 'rollup-plugin-node-resolve';
 
 import slash from 'slash';
 
@@ -46,7 +46,7 @@ export default function alias(options = {}) {
   const aliasKeys = hasResolve ?
                       Object.keys(options).filter(k => k !== 'resolve') : Object.keys(options);
 
-  const resolvePluginInstance = resolvePlugin()
+  const resolvePluginInstance = resolvePlugin();
 
   // No aliases?
   if (!aliasKeys.length) {
@@ -89,7 +89,7 @@ export default function alias(options = {}) {
           updatedId = filePath + '.js';
         }
       } else {
-        return resolvePluginInstance.resolveId(updatedId, importerId)
+        return resolvePluginInstance.resolveId(updatedId, importerId);
       }
 
       // if alias is windows absoulate path return resolved path or
