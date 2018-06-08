@@ -84,6 +84,8 @@ export default function alias(options = {}) {
         } else {
           updatedId = filePath + '.js';
         }
+      } else {
+        updatedId = require.resolve(updatedId)
       }
 
       // if alias is windows absoulate path return resolved path or
