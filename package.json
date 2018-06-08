@@ -45,6 +45,7 @@
     "rollup": "^0.50.0"
   },
   "dependencies": {
+    "rollup-plugin-node-resolve": "^3.3.0",
     "slash": "^1.0.0"
   }
 }
