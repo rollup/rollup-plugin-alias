@@ -1,29 +1,29 @@
 import test from 'ava';
 import path, { posix } from 'path';
 import { rollup } from 'rollup';
-import alias from '../dist/rollup-plugin-alias';
 import slash from 'slash';
+import alias from '../dist/rollup-plugin-alias';
 
-const normalizePath = (pathToNormalize) => slash(pathToNormalize.replace(/^([A-Z]:)/, ''));
+const normalizePath = pathToNormalize => slash(pathToNormalize.replace(/^([A-Z]:)/, ''));
 const DIRNAME = normalizePath(__dirname);
 
-test(t => {
+test((t) => {
   t.is(typeof alias, 'function');
 });
 
-test(t => {
+test((t) => {
   const result = alias();
   t.is(typeof result, 'object');
   t.is(typeof result.resolveId, 'function');
 });
 
-test(t => {
+test((t) => {
   const result = alias({});
   t.is(typeof result, 'object');
   t.is(typeof result.resolveId, 'function');
 });
 
-test('Simple aliasing', t => {
+test('Simple aliasing', (t) => {
   const result = alias({
     foo: 'bar',
     pony: 'paradise',
@@ -39,7 +39,7 @@ test('Simple aliasing', t => {
   t.is(resolved3, 'global');
 });
 
-test('Will not confuse modules with similar names', t => {
+test('Will not confuse modules with similar names', (t) => {
   const result = alias({
     foo: 'bar',
     './foo': 'bar',
@@ -54,7 +54,7 @@ test('Will not confuse modules with similar names', t => {
   t.is(resolved3, null);
 });
 
-test('Local aliasing', t => {
+test('Local aliasing', (t) => {
   const result = alias({
     foo: './bar',
     pony: './par/a/di/se',
@@ -71,7 +71,7 @@ test('Local aliasing', t => {
   t.is(resolved4, '/src/highly/nested/par/a/di/se.js');
 });
 
-test('Absolute local aliasing', t => {
+test('Absolute local aliasing', (t) => {
   const result = alias({
     foo: '/bar',
     pony: '/par/a/di/se.js',
@@ -88,7 +88,7 @@ test('Absolute local aliasing', t => {
   t.is(resolved4, '/par/a/di/se.js');
 });
 
-test('Leaves entry file untouched if matches alias', t => {
+test('Leaves entry file untouched if matches alias', (t) => {
   const result = alias({
     abacaxi: './abacaxi',
   });
@@ -98,7 +98,7 @@ test('Leaves entry file untouched if matches alias', t => {
   t.is(resolved, null);
 });
 
-test('Test for the resolve property', t => {
+test('Test for the resolve property', (t) => {
   const result = alias({
     ember: './folder/hipster',
     resolve: ['.js', '.jsx'],
@@ -109,7 +109,7 @@ test('Test for the resolve property', t => {
   t.is(resolved, posix.resolve(DIRNAME, './files/folder/hipster.jsx'));
 });
 
-test(t => {
+test((t) => {
   const result = alias({
     resolve: 'i/am/a/file',
   });
@@ -119,7 +119,7 @@ test(t => {
   t.is(resolved, 'i/am/a/file');
 });
 
-test(t => {
+test((t) => {
   const result = alias({
     resolve: './i/am/a/local/file',
   });
@@ -129,18 +129,18 @@ test(t => {
   t.is(resolved, posix.resolve(DIRNAME, './files/i/am/a/local/file.js'));
 });
 
-test('Platform path.resolve(\'file-without-extension\') aliasing', t => {
+test('Platform path.resolve(\'file-without-extension\') aliasing', (t) => {
   // this what used in React and Vue
   const result = alias({
-    test: path.resolve('./files/aliasMe'),
+    test: path.resolve('./test/files/aliasMe'),
   });
 
   const resolved = result.resolveId('test', posix.resolve(DIRNAME, './files/index.js'));
 
-  t.is(resolved, path.resolve('./files/aliasMe.js'));
+  t.is(resolved, path.resolve('./test/files/aliasMe.js'));
 });
 
-test('Windows absolute path aliasing', t => {
+test('Windows absolute path aliasing', (t) => {
   const result = alias({
     resolve: 'E:\\react\\node_modules\\fbjs\\lib\\warning',
   });
@@ -149,37 +149,36 @@ test('Windows absolute path aliasing', t => {
 
   t.is(
     normalizePath(resolved),
-    normalizePath('E:\\react\\node_modules\\fbjs\\lib\\warning.js')
+    normalizePath('E:\\react\\node_modules\\fbjs\\lib\\warning.js'),
   );
 });
 
-test('Platform path.resolve(\'file-with.ext\') aliasing', t => {
+test('Platform path.resolve(\'file-with.ext\') aliasing', (t) => {
   const result = alias({
-    test: path.resolve('./files/folder/hipster.jsx'),
+    test: path.resolve('./test/files/folder/hipster.jsx'),
     resolve: ['.js', '.jsx'],
   });
 
   const resolved = result.resolveId('test', posix.resolve(DIRNAME, './files/index.js'));
 
-  t.is(resolved, path.resolve('./files/folder/hipster.jsx'));
+  t.is(resolved, path.resolve('./test/files/folder/hipster.jsx'));
 });
 
 // Tests in Rollup
-test(t =>
-  rollup({
-    entry: './files/index.js',
-    plugins: [alias({
-      fancyNumber: './aliasMe',
-      './anotherFancyNumber': './localAliasMe',
-      numberFolder: './folder',
-      './numberFolder': './folder',
-    })],
-  }).then(stats => {
-    t.is(stats.modules[0].id.endsWith(path.normalize('/files/nonAliased.js')), true);
-    t.is(stats.modules[1].id.endsWith(path.normalize('/files/aliasMe.js')), true);
-    t.is(stats.modules[2].id.endsWith(path.normalize('/files/localAliasMe.js')), true);
-    t.is(stats.modules[3].id.endsWith(path.normalize('/files/folder/anotherNumber.js')), true);
-    t.is(stats.modules[4].id.endsWith(path.normalize('/files/index.js')), true);
-    t.is(stats.modules.length, 5);
-  })
-);
+test(t => rollup({
+  input: './test/files/index.js',
+  plugins: [alias({
+    fancyNumber: './aliasMe',
+    './anotherFancyNumber': './localAliasMe',
+    numberFolder: './folder',
+    './numberFolder': './folder',
+  })],
+}).then((stats) => {
+  const fileNames = stats.modules.map(({ id }) => id).sort();
+  t.is(fileNames.length, 5);
+  t.is(fileNames[0].endsWith(path.normalize('/files/aliasMe.js')), true);
+  t.is(fileNames[1].endsWith(path.normalize('/files/folder/anotherNumber.js')), true);
+  t.is(fileNames[2].endsWith(path.normalize('/files/index.js')), true);
+  t.is(fileNames[3].endsWith(path.normalize('/files/localAliasMe.js')), true);
+  t.is(fileNames[4].endsWith(path.normalize('/files/nonAliased.js')), true);
+}));
