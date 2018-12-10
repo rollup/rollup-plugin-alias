@@ -164,6 +164,20 @@ test('Platform path.resolve(\'file-with.ext\') aliasing', (t) => {
   t.is(resolved, path.resolve('./test/files/folder/hipster.jsx'));
 });
 
+const getModuleIdsFromBundle = (bundle) => {
+  if (bundle.modules) {
+    return Promise.resolve(bundle.modules.map(module => module.id));
+  }
+  return bundle.generate({ format: 'esm' }).then((generated) => {
+    if (generated.output) {
+      return generated.output.length ? generated.output : Object.keys(generated.output)
+        .map(chunkName => generated.output[chunkName]);
+    }
+    return [generated];
+  }).then(chunks => chunks
+    .reduce((moduleIds, chunk) => moduleIds.concat(Object.keys(chunk.modules)), []));
+};
+
 // Tests in Rollup
 test(t => rollup({
   input: './test/files/index.js',
@@ -173,12 +187,13 @@ test(t => rollup({
     numberFolder: './folder',
     './numberFolder': './folder',
   })],
-}).then((stats) => {
-  const fileNames = stats.modules.map(({ id }) => id).sort();
-  t.is(fileNames.length, 5);
-  t.is(fileNames[0].endsWith(path.normalize('/files/aliasMe.js')), true);
-  t.is(fileNames[1].endsWith(path.normalize('/files/folder/anotherNumber.js')), true);
-  t.is(fileNames[2].endsWith(path.normalize('/files/index.js')), true);
-  t.is(fileNames[3].endsWith(path.normalize('/files/localAliasMe.js')), true);
-  t.is(fileNames[4].endsWith(path.normalize('/files/nonAliased.js')), true);
-}));
+}).then(getModuleIdsFromBundle)
+  .then((moduleIds) => {
+    moduleIds.sort();
+    t.is(moduleIds.length, 5);
+    t.is(moduleIds[0].endsWith(path.normalize('/files/aliasMe.js')), true);
+    t.is(moduleIds[1].endsWith(path.normalize('/files/folder/anotherNumber.js')), true);
+    t.is(moduleIds[2].endsWith(path.normalize('/files/index.js')), true);
+    t.is(moduleIds[3].endsWith(path.normalize('/files/localAliasMe.js')), true);
+    t.is(moduleIds[4].endsWith(path.normalize('/files/nonAliased.js')), true);
+  }));
