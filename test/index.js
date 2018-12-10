@@ -178,8 +178,7 @@ const getModuleIdsFromBundle = (bundle) => {
     .reduce((moduleIds, chunk) => moduleIds.concat(Object.keys(chunk.modules)), []));
 };
 
-// Tests in Rollup
-test(t => rollup({
+test('Works in rollup', t => rollup({
   input: './test/files/index.js',
   plugins: [alias({
     fancyNumber: './aliasMe',
@@ -189,11 +188,19 @@ test(t => rollup({
   })],
 }).then(getModuleIdsFromBundle)
   .then((moduleIds) => {
-    moduleIds.sort();
-    t.is(moduleIds.length, 5);
-    t.is(moduleIds[0].endsWith(path.normalize('/files/aliasMe.js')), true);
-    t.is(moduleIds[1].endsWith(path.normalize('/files/folder/anotherNumber.js')), true);
-    t.is(moduleIds[2].endsWith(path.normalize('/files/index.js')), true);
-    t.is(moduleIds[3].endsWith(path.normalize('/files/localAliasMe.js')), true);
-    t.is(moduleIds[4].endsWith(path.normalize('/files/nonAliased.js')), true);
+    const normalizedIds = moduleIds.map(id => path.resolve(id)).sort();
+    t.is(normalizedIds.length, 5);
+    [
+      '/files/aliasMe.js',
+      '/files/folder/anotherNumber.js',
+      '/files/index.js',
+      '/files/localAliasMe.js',
+      '/files/nonAliased.js',
+    ].map(id => path.normalize(id)).forEach(
+      (expectedId, index) => t.is(
+        normalizedIds[index].endsWith(expectedId),
+        true,
+        `expected ${normalizedIds[index]} to end with ${expectedId}`,
+      ),
+    );
   }));
