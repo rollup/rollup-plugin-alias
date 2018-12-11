@@ -1,5 +1,9 @@
 # rollup-plugin-alias changelog
 
+## 1.5.1
+
+* Update tests for Rollup@1.0 compatibility and tests ([#48](https://github.com/rollup/rollup-plugin-alias/pull/48))
+
 ## 1.4.0
 
 * Various Windows fixes ([#22](https://github.com/rollup/rollup-plugin-alias/pull/22))
