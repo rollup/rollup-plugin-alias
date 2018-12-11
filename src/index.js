@@ -1,6 +1,6 @@
-import path, { posix } from 'path';
-import { platform } from 'os';
 import fs from 'fs';
+import { platform } from 'os';
+import path, { posix } from 'path';
 
 import slash from 'slash';
 
@@ -22,7 +22,7 @@ const matches = (key, importee) => {
 };
 const endsWith = (needle, haystack) => haystack.slice(-needle.length) === needle;
 const isFilePath = id => /^\.?\//.test(id);
-const exists = uri => {
+const exists = (uri) => {
   try {
     return fs.statSync(uri).isFile();
   } catch (e) {
@@ -30,7 +30,7 @@ const exists = uri => {
   }
 };
 
-const normalizeId = id => {
+const normalizeId = (id) => {
   if ((IS_WINDOWS && typeof id === 'string') || VOLUME.test(id)) {
     return slash(id.replace(VOLUME, ''));
   }
@@ -41,8 +41,8 @@ const normalizeId = id => {
 export default function alias(options = {}) {
   const hasResolve = Array.isArray(options.resolve);
   const resolve = hasResolve ? options.resolve : ['.js'];
-  const aliasKeys = hasResolve ?
-                      Object.keys(options).filter(k => k !== 'resolve') : Object.keys(options);
+  const aliasKeys = hasResolve
+    ? Object.keys(options).filter(k => k !== 'resolve') : Object.keys(options);
 
   // No aliases?
   if (!aliasKeys.length) {
@@ -73,12 +73,12 @@ export default function alias(options = {}) {
         // Resolve file names
         const filePath = posix.resolve(directory, updatedId);
         const match = resolve.map(ext => (endsWith(ext, filePath) ? filePath : `${filePath}${ext}`))
-                            .find(exists);
+          .find(exists);
 
         if (match) {
           updatedId = match;
-        // To keep the previous behaviour we simply return the file path
-        // with extension
+          // To keep the previous behaviour we simply return the file path
+          // with extension
         } else if (endsWith('.js', filePath)) {
           updatedId = filePath;
         } else {
