@@ -77,8 +77,8 @@ export default function alias(options = {}) {
 
         if (match) {
           updatedId = match;
-        // To keep the previous behaviour we simply return the file path
-        // with extension
+          // To keep the previous behaviour we simply return the file path
+          // with extension
         } else if (endsWith('.js', filePath)) {
           updatedId = filePath;
         } else {
