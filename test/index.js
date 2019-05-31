@@ -7,17 +7,17 @@ import alias from '../dist/rollup-plugin-alias';
 const normalizePath = pathToNormalize => slash(pathToNormalize.replace(/^([A-Z]:)/, ''));
 const DIRNAME = normalizePath(__dirname);
 
-test((t) => {
+test('type', (t) => {
   t.is(typeof alias, 'function');
 });
 
-test((t) => {
+test('instance', (t) => {
   const result = alias();
   t.is(typeof result, 'object');
   t.is(typeof result.resolveId, 'function');
 });
 
-test((t) => {
+test('defaults', (t) => {
   const result = alias({});
   t.is(typeof result, 'object');
   t.is(typeof result.resolveId, 'function');
@@ -109,7 +109,7 @@ test('Test for the resolve property', (t) => {
   t.is(resolved, posix.resolve(DIRNAME, './files/folder/hipster.jsx'));
 });
 
-test((t) => {
+test('i/am/a/file', (t) => {
   const result = alias({
     resolve: 'i/am/a/file',
   });
@@ -119,7 +119,7 @@ test((t) => {
   t.is(resolved, 'i/am/a/file');
 });
 
-test((t) => {
+test('i/am/a/local/file', (t) => {
   const result = alias({
     resolve: './i/am/a/local/file',
   });
