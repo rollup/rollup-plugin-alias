@@ -71,6 +71,17 @@ test('Local aliasing', (t) => {
   t.is(resolved4, '/src/highly/nested/par/a/di/se.js');
 });
 
+test('Relative aliasing', (t) => {
+  const result = alias({
+    '../foo': '../bar',
+  });
+
+  const resolved = result.resolveId('../foo', '/src/highly/nested/importer.js');
+
+  t.is(resolved, '/src/highly/bar.js');
+});
+
+
 test('Absolute local aliasing', (t) => {
   const result = alias({
     foo: '/bar',

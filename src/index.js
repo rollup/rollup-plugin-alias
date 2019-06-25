@@ -21,7 +21,7 @@ const matches = (key, importee) => {
   return importeeStartsWithKey && importeeHasSlashAfterKey;
 };
 const endsWith = (needle, haystack) => haystack.slice(-needle.length) === needle;
-const isFilePath = id => /^\.?\//.test(id);
+const isFilePath = id => /^\.{0,2}\//.test(id);
 const exists = (uri) => {
   try {
     return fs.statSync(uri).isFile();
