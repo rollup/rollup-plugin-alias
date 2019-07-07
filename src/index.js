@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { platform } from 'os';
-import path, { posix } from 'path';
+import path from 'path';
 
 import slash from 'slash';
 
@@ -68,10 +68,10 @@ export default function alias(options = {}) {
       let updatedId = normalizeId(importeeId.replace(toReplace, entry));
 
       if (isFilePath(updatedId)) {
-        const directory = posix.dirname(importerId);
+        const directory = process.cwd();
 
         // Resolve file names
-        const filePath = posix.resolve(directory, updatedId);
+        const filePath = path.resolve(directory, updatedId);
         const match = resolve.map(ext => (endsWith(ext, filePath) ? filePath : `${filePath}${ext}`))
           .find(exists);
 
