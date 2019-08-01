@@ -42,6 +42,27 @@ export default {
   })],
 };
 ```
+The order of the entries are important, in that are the first rules are applied first (obviously). :) 
+
+You can now also include Regular Expressions to search in a way more distinct and complex manner:
+
+An optional `resolve` array with file extensions can be provided.
+If present local aliases beginning with `./` will be resolved to existing files:
+
+```javascript
+// rollup.config.js
+import alias from 'rollup-plugin-alias';
+
+export default {
+  input: './src/index.js',
+  plugins: [alias({
+    resolve: ['.jsx', '.js'],
+    entries:[
+      {find:^./foobar\/path.*/i, replacement: './bar'} 
+    ]
+  })],
+};
+```
 
 An optional `resolve` array with file extensions can be provided.
 If present local aliases beginning with `./` will be resolved to existing files:
