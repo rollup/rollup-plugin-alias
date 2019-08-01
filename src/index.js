@@ -9,13 +9,20 @@ const IS_WINDOWS = platform() === 'win32';
 
 // Helper functions
 const noop = () => null;
-const matches = (key, importee) => {
+const matches = (key, importee, isRegEx) => {
   if (importee.length < key.length) {
     return false;
   }
   if (importee === key) {
     return true;
   }
+
+  if (isRegEx) {
+    if (key.test(importee) === true) {
+      return true;
+    }
+  }
+
   const importeeStartsWithKey = (importee.indexOf(key) === 0);
   const importeeHasSlashAfterKey = (importee.substring(key.length)[0] === '/');
   return importeeStartsWithKey && importeeHasSlashAfterKey;
@@ -39,13 +46,11 @@ const normalizeId = (id) => {
 };
 
 export default function alias(options = {}) {
-  const hasResolve = Array.isArray(options.resolve);
-  const resolve = hasResolve ? options.resolve : ['.js'];
-  const aliasKeys = hasResolve
-    ? Object.keys(options).filter(k => k !== 'resolve') : Object.keys(options);
+  const resolve = Array.isArray(options.resolve) ? options.resolve : ['.js'];
+  const entries = options.entries?options.entries:[];
 
   // No aliases?
-  if (!aliasKeys.length) {
+  if (!entries || entries.length <= 0) {
     return {
       resolveId: noop,
     };
@@ -57,17 +62,23 @@ export default function alias(options = {}) {
       const importerId = normalizeId(importer);
 
       // First match is supposed to be the correct one
-      const toReplace = aliasKeys.find(key => matches(key, importeeId));
-
-      if (!toReplace || !importerId) {
+      const matchedEntry = entries.find(entry => matches(entry.find, importeeId, entry.isRegEx));
+      if (!matchedEntry || !importerId) {
         return null;
       }
 
-      const entry = options[toReplace];
+      const toReplace = matchedEntry.find;
+      const isDir = matchedEntry.isRegEx && toReplace.source
+                && (toReplace.source.substr(-1) === '/'
+                    || toReplace.source.substr(-1) === '\\') ?
+        true:false;
 
-      let updatedId = normalizeId(importeeId.replace(toReplace, entry));
+      const replacement = isDir?matchedEntry.replacement+path.sep:matchedEntry.replacement;
+
+      let updatedId = normalizeId(importeeId.replace(toReplace, replacement));
 
       if (isFilePath(updatedId)) {
+
         const directory = posix.dirname(importerId);
 
         // Resolve file names
@@ -89,10 +100,9 @@ export default function alias(options = {}) {
       // if alias is windows absoulate path return resolved path or
       // rollup on windows will throw:
       //  [TypeError: Cannot read property 'specifier' of undefined]
-      if (VOLUME.test(entry)) {
+      if (VOLUME.test(replacement)) {
         return path.resolve(updatedId);
       }
-
       return updatedId;
     },
   };
