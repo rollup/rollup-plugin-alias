@@ -36,7 +36,9 @@ import alias from 'rollup-plugin-alias';
 export default {
   input: './src/index.js',
   plugins: [alias({
-    somelibrary: './mylocallibrary'
+    entries:[
+      {find:'somelibrary', replacement: './mylocallibrary'}
+    ]
   })],
 };
 ```
@@ -52,7 +54,9 @@ export default {
   input: './src/index.js',
   plugins: [alias({
     resolve: ['.jsx', '.js'],
-    foo: './bar'  // Will check for ./bar.jsx and ./bar.js
+    entries:[
+      {find:'foo', replacement: './bar'}  // Will check for ./bar.jsx and ./bar.js
+    ]
   })],
 };
 ```
