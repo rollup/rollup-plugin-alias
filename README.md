@@ -36,7 +36,7 @@ import alias from 'rollup-plugin-alias';
 export default {
   input: './src/index.js',
   plugins: [alias({
-    resolve: ['.jsx', '.js'],
+    resolve: ['.jsx', '.js'], //optional, by default this will just look for .js files or folders
     entries:[
       {find:'somelibrary', replacement: './mylocallibrary'},
       {find:/^.\/foobar\/path.*/i, replacement: './bar'},
@@ -47,26 +47,7 @@ export default {
 ```
 The order of the entries is important, in that the first rules are applied first.
 
-You can now also include Regular Expressions to search in a way more distinct and complex manner.
-
-An optional `resolve` array with file extensions can be provided.
-If present local aliases beginning with `./` will be resolved to existing files:
-
-```javascript
-// rollup.config.js
-import alias from 'rollup-plugin-alias';
-
-export default {
-  input: './src/index.js',
-  plugins: [alias({
-    resolve: ['.jsx', '.js'], //optional, by default this will just look for .js files
-    entries:[
-      {find:'foo', replacement: './bar'}  // Will check for ./bar.jsx and ./bar.js
-    ]
-  })],
-};
-```
-If not given local aliases will be resolved with a `.js` extension.
+You use Regular Expressions to search in a way more distinct and complex manner.
 
 ## License
 MIT, see `LICENSE` for more information
