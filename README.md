@@ -47,7 +47,7 @@ export default {
 ```
 The order of the entries is important, in that the first rules are applied first.
 
-You use Regular Expressions to search in a way more distinct and complex manner.
+You can use either simple Strings or Regular Expressions to search in a more distinct and complex manner (e.g. to do partial replacements via subpattern-matching, see aboves example).
 
 ## License
 MIT, see `LICENSE` for more information
