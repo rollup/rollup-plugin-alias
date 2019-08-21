@@ -9,20 +9,18 @@ const IS_WINDOWS = platform() === 'win32';
 
 // Helper functions
 const noop = () => null;
-const matches = (key, importee, isRegEx) => {
+const matches = (key, importee) => {
   if (importee.length < key.length) {
     return false;
   }
   if (importee === key) {
     return true;
   }
-
-  if (isRegEx) {
+  if (key instanceof RegExp) {
     if (key.test(importee) === true) {
       return true;
     }
   }
-
   const importeeStartsWithKey = (importee.indexOf(key) === 0);
   const importeeHasSlashAfterKey = (importee.substring(key.length)[0] === '/');
   return importeeStartsWithKey && importeeHasSlashAfterKey;
@@ -41,7 +39,6 @@ const normalizeId = (id) => {
   if ((IS_WINDOWS && typeof id === 'string') || VOLUME.test(id)) {
     return slash(id.replace(VOLUME, ''));
   }
-
   return id;
 };
 
@@ -62,23 +59,21 @@ export default function alias(options = {}) {
       const importerId = normalizeId(importer);
 
       // First match is supposed to be the correct one
-      const matchedEntry = entries.find(entry => matches(entry.find, importeeId, entry.isRegEx));
+      const matchedEntry = entries.find(entry => matches(entry.find, importeeId));
       if (!matchedEntry || !importerId) {
         return null;
       }
 
       const toReplace = matchedEntry.find;
-      const isDir = matchedEntry.isRegEx && toReplace.source
-                && (toReplace.source.substr(-1) === '/'
-                    || toReplace.source.substr(-1) === '\\') ?
-        true:false;
+      const isRegEx = toReplace instanceof RegExp;
+      const isDir = (!isRegEx && (toReplace.substr(-1) === '/' || toReplace.substr(-1) === '\\') 
+					|| isRegEx && (toReplace.source.substr(-1) === '/' || toReplace.source.substr(-1) === '\\'));
 
       const replacement = isDir?matchedEntry.replacement+path.sep:matchedEntry.replacement;
 
       let updatedId = normalizeId(importeeId.replace(toReplace, replacement));
 
       if (isFilePath(updatedId)) {
-
         const directory = posix.dirname(importerId);
 
         // Resolve file names
