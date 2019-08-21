@@ -39,9 +39,11 @@ export default {
     alias({
       resolve: ['.jsx', '.js'], //optional, by default this will just look for .js files or folders
       entries:[
+        {find:'something", replacement: '../../../something'}, //the initial example
         {find:'somelibrary-1.0.0', replacement: './mylocallibrary-1.5.0'}, //remap a library with a specific version
-        {find:/^i18n\!(.*)/, replacement: '$1'}, //remove some loaders (e.g. when they're transpiled via the AMD module)
-        {find:/^(.*)\.js$/, replacement: '$1.wasm'} //for whatever reason, replace all .js extensions with .wasm
+        {find:/^i18n\!(.*)/, replacement: '$1'}, //remove something in front of the import (e.g. loaders, that were previously transpiled via the AMD module)
+        //for whatever reason, replace all .js extensions with .wasm
+        {find:/^(.*)\.js$/, replacement: '$1.wasm'} 
       ]
     })
   ],
