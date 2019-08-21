@@ -39,14 +39,15 @@ export default {
     resolve: ['.jsx', '.js'],
     entries:[
       {find:'somelibrary', replacement: './mylocallibrary'},
-      {find:/^./foobar\/path.*/i, replacement: './bar', isRegEx:true} 
+      {find:/^./foobar\/path.*/i, replacement: './bar'},
+      {find:/^./test/(.*)/i, replacement: './anotherfolder/$1'
     ]
   })],
 };
 ```
 The order of the entries is important, in that the first rules are applied first.
 
-You can now also include Regular Expressions to search in a way more distinct and complex manner:
+You can now also include Regular Expressions to search in a way more distinct and complex manner.
 
 An optional `resolve` array with file extensions can be provided.
 If present local aliases beginning with `./` will be resolved to existing files:
