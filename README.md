@@ -39,8 +39,8 @@ export default {
     resolve: ['.jsx', '.js'],
     entries:[
       {find:'somelibrary', replacement: './mylocallibrary'},
-      {find:/^./foobar\/path.*/i, replacement: './bar'},
-      {find:/^./test/(.*)/i, replacement: './anotherfolder/$1'
+      {find:/^.\/foobar\/path.*/i, replacement: './bar'},
+      {find:/^.\/test\/(.*)/i, replacement: './anotherfolder/$1'
     ]
   })],
 };
