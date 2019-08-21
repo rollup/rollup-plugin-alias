@@ -59,7 +59,7 @@ import alias from 'rollup-plugin-alias';
 export default {
   input: './src/index.js',
   plugins: [alias({
-    resolve: ['.jsx', '.js'],
+    resolve: ['.jsx', '.js'], //optional, by default this will just look for .js files
     entries:[
       {find:'foo', replacement: './bar'}  // Will check for ./bar.jsx and ./bar.js
     ]
