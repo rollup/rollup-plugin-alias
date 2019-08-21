@@ -35,14 +35,16 @@ import alias from 'rollup-plugin-alias';
 
 export default {
   input: './src/index.js',
-  plugins: [alias({
-    resolve: ['.jsx', '.js'], //optional, by default this will just look for .js files or folders
-    entries:[
-      {find:'somelibrary', replacement: './mylocallibrary'},
-      {find:/^.\/foobar\/path.*/i, replacement: './bar'},
-      {find:/^.\/test\/(.*)/i, replacement: './anotherfolder/$1'
-    ]
-  })],
+  plugins: [
+    alias({
+      resolve: ['.jsx', '.js'], //optional, by default this will just look for .js files or folders
+      entries:[
+        {find:'somelibrary', replacement: './mylocallibrary'},
+        {find:/^.\/foobar\/path.*/i, replacement: './bar'},
+        {find:/^.\/test\/(.*)/i, replacement: './anotherfolder/$1'
+      ]
+    })
+  ],
 };
 ```
 The order of the entries is important, in that the first rules are applied first.
