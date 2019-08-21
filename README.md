@@ -39,10 +39,9 @@ export default {
     alias({
       resolve: ['.jsx', '.js'], //optional, by default this will just look for .js files or folders
       entries:[
-        {find:'somelibrary', replacement: './mylocallibrary'},
-        {find:/^foobar\/path.*/i, replacement: './bar'},
-        {find:/^test\/(.*)/i, replacement: './anotherfolder/$1'},
-        {find:/^test$/i, replacement: 'super-secret-sausage-library'}
+        {find:'somelibrary-1.0.0', replacement: './mylocallibrary-1.5.0'}, //remap a library with a specific version
+        {find:/^i18n\!(.*)/, replacement: '$1'}, //remove some loaders (e.g. when they're transpiled via the AMD module)
+        {find:/^(.*)\.js$/, replacement: '$1.wasm'} //for whatever reason, replace all .js extensions with .wasm
       ]
     })
   ],
