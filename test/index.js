@@ -44,19 +44,19 @@ test('Simple aliasing', (t) => {
 test('RegExp aliasing', (t) => {
   const result = alias({
     entries: [
-      {find:new RegExp('fo.*'), replacement:'foobar2019', isRegEx:true},
-      {find:new RegExp('.*pony.*'), replacement:'i/am/a/barbie/girl', isRegEx:true},
-      {find:new RegExp('^test/$'), replacement:'this/is/strict', isRegEx:true}
+      {find:/f(o+)bar/, replacement:'f$1bar2019'},
+      {find:new RegExp('.*pony.*'), replacement:'i/am/a/barbie/girl'},
+      {find:/^test\/$/, replacement:'this/is/strict'}
     ]
   });
 
-  const resolved = result.resolveId('foobar', '/src/importer.js');
+  const resolved = result.resolveId('fooooooooobar', '/src/importer.js');
   const resolved2 = result.resolveId('im/a/little/pony/yes', '/src/importer.js');
   const resolved3 = result.resolveId('./test', '/src/importer.js');
   const resolved4 = result.resolveId('test', '/src/importer.js');
   const resolved5 = result.resolveId('test/', '/src/importer.js');
 
-  t.is(resolved, 'foobar2019');
+  t.is(resolved, 'fooooooooobar2019');
   t.is(resolved2, 'i/am/a/barbie/girl');
   t.is(resolved3, null);
   t.is(resolved4, null);

@@ -9,20 +9,18 @@ const IS_WINDOWS = platform() === 'win32';
 
 // Helper functions
 const noop = () => null;
-const matches = (key, importee) => {
-  if (importee.length < key.length) {
+const matches = (pattern, importee) => {
+  if (pattern instanceof RegExp) {
+    return pattern.test(importee);
+  }
+  if (importee.length < pattern.length) {
     return false;
   }
-  if (importee === key) {
+  if (importee === pattern) {
     return true;
   }
-  if (key instanceof RegExp) {
-    if (key.test(importee) === true) {
-      return true;
-    }
-  }
-  const importeeStartsWithKey = (importee.indexOf(key) === 0);
-  const importeeHasSlashAfterKey = (importee.substring(key.length)[0] === '/');
+  const importeeStartsWithKey = (importee.indexOf(pattern) === 0);
+  const importeeHasSlashAfterKey = (importee.substring(pattern.length)[0] === '/');
   return importeeStartsWithKey && importeeHasSlashAfterKey;
 };
 const endsWith = (needle, haystack) => haystack.slice(-needle.length) === needle;
@@ -47,7 +45,7 @@ export default function alias(options = {}) {
   const entries = options.entries?options.entries:[];
 
   // No aliases?
-  if (!entries || entries.length <= 0) {
+  if (!entries || entries.length === 0) {
     return {
       resolveId: noop,
     };
@@ -64,14 +62,7 @@ export default function alias(options = {}) {
         return null;
       }
 
-      const toReplace = matchedEntry.find;
-      const isRegEx = toReplace instanceof RegExp;
-      const isDir = (!isRegEx && (toReplace.substr(-1) === '/' || toReplace.substr(-1) === '\\') 
-					|| isRegEx && (toReplace.source.substr(-1) === '/' || toReplace.source.substr(-1) === '\\'));
-
-      const replacement = isDir?matchedEntry.replacement+path.sep:matchedEntry.replacement;
-
-      let updatedId = normalizeId(importeeId.replace(toReplace, replacement));
+      let updatedId = normalizeId(importeeId.replace(matchedEntry.find, matchedEntry.replacement));
 
       if (isFilePath(updatedId)) {
         const directory = posix.dirname(importerId);
@@ -95,7 +86,7 @@ export default function alias(options = {}) {
       // if alias is windows absoulate path return resolved path or
       // rollup on windows will throw:
       //  [TypeError: Cannot read property 'specifier' of undefined]
-      if (VOLUME.test(replacement)) {
+      if (VOLUME.test(matchedEntry.replacement)) {
         return path.resolve(updatedId);
       }
       return updatedId;

@@ -27,7 +27,7 @@ For Webpack users: This is a plugin to mimic the `resolve.alias` functionality i
 ```
 $ npm install rollup-plugin-alias
 ```
-
+#
 ## Usage
 ```javascript
 // rollup.config.js
@@ -39,12 +39,12 @@ export default {
     resolve: ['.jsx', '.js'],
     entries:[
       {find:'somelibrary', replacement: './mylocallibrary'},
-      {find:^./foobar\/path.*/i, replacement: './bar', isRegEx:true} 
+      {find:/^./foobar\/path.*/i, replacement: './bar', isRegEx:true} 
     ]
   })],
 };
 ```
-The order of the entries are important, in that are the first rules are applied first (obviously). :) 
+The order of the entries is important, in that the first rules are applied first.
 
 You can now also include Regular Expressions to search in a way more distinct and complex manner:
 
