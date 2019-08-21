@@ -41,7 +41,7 @@ export default {
       entries:[
         {find:'something', replacement: '../../../something'}, //the initial example
         {find:'somelibrary-1.0.0', replacement: './mylocallibrary-1.5.0'}, //remap a library with a specific version
-        {find:/^i18n\!(.*)/, replacement: '$1'}, //remove something in front of the import (e.g. loaders, that were previously transpiled via the AMD module)
+        {find:/^i18n\!(.*)/, replacement: '$1.js'}, //remove something in front of the import and append an extension (e.g. loaders, for files that were previously transpiled via the AMD module, to properly handle them in rollup as internals now)
         //for whatever reason, replace all .js extensions with .wasm
         {find:/^(.*)\.js$/, replacement: '$1.wasm'} 
       ]
