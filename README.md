@@ -41,7 +41,8 @@ export default {
       entries:[
         {find:'somelibrary', replacement: './mylocallibrary'},
         {find:/^foobar\/path.*/i, replacement: './bar'},
-        {find:/^test\/(.*)/i, replacement: './anotherfolder/$1'
+        {find:/^test\/(.*)/i, replacement: './anotherfolder/$1'},
+        {find:/^test$/i, replacement: 'super-secret-sausage-library'}
       ]
     })
   ],
