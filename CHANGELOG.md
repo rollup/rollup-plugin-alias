@@ -1,5 +1,12 @@
 # rollup-plugin-alias changelog
 
+## 2.0.0
+*2019-08-22*
+* Add RegExp support and strict order of entries ([#53](https://github.com/rollup/rollup-plugin-alias/pull/53))
+
+### Breaking Changes
+Aliases always need to be provided as an array, see #53
+
 ## 1.5.2
 
 * Update dependencies
