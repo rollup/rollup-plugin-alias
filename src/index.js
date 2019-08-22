@@ -9,15 +9,18 @@ const IS_WINDOWS = platform() === 'win32';
 
 // Helper functions
 const noop = () => null;
-const matches = (key, importee) => {
-  if (importee.length < key.length) {
+const matches = (pattern, importee) => {
+  if (pattern instanceof RegExp) {
+    return pattern.test(importee);
+  }
+  if (importee.length < pattern.length) {
     return false;
   }
-  if (importee === key) {
+  if (importee === pattern) {
     return true;
   }
-  const importeeStartsWithKey = (importee.indexOf(key) === 0);
-  const importeeHasSlashAfterKey = (importee.substring(key.length)[0] === '/');
+  const importeeStartsWithKey = (importee.indexOf(pattern) === 0);
+  const importeeHasSlashAfterKey = (importee.substring(pattern.length)[0] === '/');
   return importeeStartsWithKey && importeeHasSlashAfterKey;
 };
 const endsWith = (needle, haystack) => haystack.slice(-needle.length) === needle;
@@ -34,18 +37,15 @@ const normalizeId = (id) => {
   if ((IS_WINDOWS && typeof id === 'string') || VOLUME.test(id)) {
     return slash(id.replace(VOLUME, ''));
   }
-
   return id;
 };
 
 export default function alias(options = {}) {
-  const hasResolve = Array.isArray(options.resolve);
-  const resolve = hasResolve ? options.resolve : ['.js'];
-  const aliasKeys = hasResolve
-    ? Object.keys(options).filter(k => k !== 'resolve') : Object.keys(options);
+  const resolve = Array.isArray(options.resolve) ? options.resolve : ['.js'];
+  const entries = options.entries?options.entries:[];
 
   // No aliases?
-  if (!aliasKeys.length) {
+  if (!entries || entries.length === 0) {
     return {
       resolveId: noop,
     };
@@ -57,15 +57,12 @@ export default function alias(options = {}) {
       const importerId = normalizeId(importer);
 
       // First match is supposed to be the correct one
-      const toReplace = aliasKeys.find(key => matches(key, importeeId));
-
-      if (!toReplace || !importerId) {
+      const matchedEntry = entries.find(entry => matches(entry.find, importeeId));
+      if (!matchedEntry || !importerId) {
         return null;
       }
 
-      const entry = options[toReplace];
-
-      let updatedId = normalizeId(importeeId.replace(toReplace, entry));
+      let updatedId = normalizeId(importeeId.replace(matchedEntry.find, matchedEntry.replacement));
 
       if (isFilePath(updatedId)) {
         const directory = posix.dirname(importerId);
@@ -89,10 +86,9 @@ export default function alias(options = {}) {
       // if alias is windows absoulate path return resolved path or
       // rollup on windows will throw:
       //  [TypeError: Cannot read property 'specifier' of undefined]
-      if (VOLUME.test(entry)) {
+      if (VOLUME.test(matchedEntry.replacement)) {
         return path.resolve(updatedId);
       }
-
       return updatedId;
     },
   };
