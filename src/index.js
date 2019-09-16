@@ -4,7 +4,7 @@ import path, { posix } from 'path';
 
 import slash from 'slash';
 
-const VOLUME = /^([A-Z]:)/;
+const VOLUME = /^([A-Z]:)/i;
 const IS_WINDOWS = platform() === 'win32';
 
 // Helper functions
