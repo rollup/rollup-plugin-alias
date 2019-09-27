@@ -1,5 +1,10 @@
 # rollup-plugin-alias changelog
 
+## 2.0.1
+*2019-09-27*
+* Update dependencies ([#59](https://github.com/rollup/rollup-plugin-alias/pull/59))
+* Make volume letter regexp case independent ([#57](https://github.com/rollup/rollup-plugin-alias/pull/57))
+
 ## 2.0.0
 *2019-08-22*
 * Add RegExp support and strict order of entries ([#53](https://github.com/rollup/rollup-plugin-alias/pull/53))
