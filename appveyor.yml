@@ -7,18 +7,19 @@ environment:
 install:
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node $env:nodejs_version
-  # Update npm
-  - npm install -g npm
+  # install yarn
+  - curl -o- -L https://yarnpkg.com/install.sh | bash
+  - export PATH="$HOME/.yarn/bin:$PATH"
   # install modules
-  - npm install
+  - yarn --frozen-lockfile
 
 # Post-install test scripts.
 test_script:
   # Output useful info for debugging.
   - node --version
-  - npm --version
+  - yarn --version
   # run tests
-  - npm test
+  - yarn test
 
 # Don't actually build.
 build: off
