@@ -69,28 +69,27 @@ export default function alias(options = {}) {
       const directory = isFile ? posix.dirname(importerId) : undefined;
 
       try {
-        return sync(updatedId, {
+        updatedId = sync(updatedId, {
           basedir: directory,
           extensions: resolve,
         });
       } catch (e) {
-        // do nothing, fallback to previous behavior
-      }
-
-      if (isFile) {
-        // Resolve file names
-        const filePath = posix.resolve(directory, updatedId);
-        const match = resolve.map(ext => (endsWith(ext, filePath) ? filePath : `${filePath}${ext}`))
-          .find(exists);
-
-        if (match) {
-          updatedId = match;
-          // To keep the previous behaviour we simply return the file path
-          // with extension
-        } else if (endsWith('.js', filePath)) {
-          updatedId = filePath;
-        } else {
-          updatedId = filePath + '.js';
+        // fallback to previous behavior
+        if (isFile) {
+          // Resolve file names
+          const filePath = posix.resolve(directory, updatedId);
+          const match = resolve.map(ext => (endsWith(ext, filePath) ? filePath : `${filePath}${ext}`))
+            .find(exists);
+  
+          if (match) {
+            updatedId = match;
+            // To keep the previous behaviour we simply return the file path
+            // with extension
+          } else if (endsWith('.js', filePath)) {
+            updatedId = filePath;
+          } else {
+            updatedId = filePath + '.js';
+          }
         }
       }
 
