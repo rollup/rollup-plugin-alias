@@ -8,11 +8,11 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "rollup -c",
-    "prepublish": "npm run build",
+    "prepublishOnly": "yarn build",
     "lint": "eslint . --fix",
-    "pretest": "npm-run-all -p build lint",
+    "pretest": "run-p build lint",
     "test": "ava test/index.js",
-    "coverage": "nyc npm test"
+    "coverage": "nyc yarn test"
   },
   "repository": {
     "type": "git",
@@ -45,6 +45,7 @@
     "rollup": "^1.21.4"
   },
   "dependencies": {
+    "resolve": "^1.12.0",
     "slash": "^3.0.0"
   }
 }

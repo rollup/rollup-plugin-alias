@@ -1,6 +1,6 @@
-import fs from 'fs';
 import { platform } from 'os';
 import path, { posix } from 'path';
+import { sync } from 'resolve';
 
 import slash from 'slash';
 
@@ -23,15 +23,6 @@ const matches = (pattern, importee) => {
   const importeeHasSlashAfterKey = (importee.substring(pattern.length)[0] === '/');
   return importeeStartsWithKey && importeeHasSlashAfterKey;
 };
-const endsWith = (needle, haystack) => haystack.slice(-needle.length) === needle;
-const isFilePath = id => /^\.?\//.test(id);
-const exists = (uri) => {
-  try {
-    return fs.statSync(uri).isFile();
-  } catch (e) {
-    return false;
-  }
-};
 
 const normalizeId = (id) => {
   if ((IS_WINDOWS && typeof id === 'string') || VOLUME.test(id)) {
@@ -42,7 +33,7 @@ const normalizeId = (id) => {
 
 export default function alias(options = {}) {
   const resolve = Array.isArray(options.resolve) ? options.resolve : ['.js'];
-  const entries = options.entries?options.entries:[];
+  const entries = options.entries ? options.entries : [];
 
   // No aliases?
   if (!entries || entries.length === 0) {
@@ -64,23 +55,16 @@ export default function alias(options = {}) {
 
       let updatedId = normalizeId(importeeId.replace(matchedEntry.find, matchedEntry.replacement));
 
-      if (isFilePath(updatedId)) {
-        const directory = posix.dirname(importerId);
+      const directory = posix.dirname(importerId);
 
+      try {
         // Resolve file names
-        const filePath = posix.resolve(directory, updatedId);
-        const match = resolve.map(ext => (endsWith(ext, filePath) ? filePath : `${filePath}${ext}`))
-          .find(exists);
-
-        if (match) {
-          updatedId = match;
-          // To keep the previous behaviour we simply return the file path
-          // with extension
-        } else if (endsWith('.js', filePath)) {
-          updatedId = filePath;
-        } else {
-          updatedId = filePath + '.js';
-        }
+        updatedId = sync(updatedId, {
+          basedir: directory,
+          extensions: resolve
+        });
+      } catch (e) {
+        return null;
       }
 
       // if alias is windows absoulate path return resolved path or
@@ -89,6 +73,7 @@ export default function alias(options = {}) {
       if (VOLUME.test(matchedEntry.replacement)) {
         return path.resolve(updatedId);
       }
+
       return updatedId;
     },
   };
