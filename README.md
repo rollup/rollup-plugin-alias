@@ -27,7 +27,7 @@ For Webpack users: This is a plugin to mimic the `resolve.alias` functionality i
 ```
 $ npm install rollup-plugin-alias
 ```
-
+#
 ## Usage
 ```javascript
 // rollup.config.js
@@ -35,28 +35,23 @@ import alias from 'rollup-plugin-alias';
 
 export default {
   input: './src/index.js',
-  plugins: [alias({
-    somelibrary: './mylocallibrary'
-  })],
+  plugins: [
+    alias({
+      resolve: ['.jsx', '.js'], //optional, by default this will just look for .js files or folders
+      entries:[
+        {find:'something', replacement: '../../../something'}, //the initial example
+        {find:'somelibrary-1.0.0', replacement: './mylocallibrary-1.5.0'}, //remap a library with a specific version
+        {find:/^i18n\!(.*)/, replacement: '$1.js'}, //remove something in front of the import and append an extension (e.g. loaders, for files that were previously transpiled via the AMD module, to properly handle them in rollup as internals now)
+        //for whatever reason, replace all .js extensions with .wasm
+        {find:/^(.*)\.js$/, replacement: '$1.wasm'} 
+      ]
+    })
+  ],
 };
 ```
+The order of the entries is important, in that the first rules are applied first.
 
-An optional `resolve` array with file extensions can be provided.
-If present local aliases beginning with `./` will be resolved to existing files:
-
-```javascript
-// rollup.config.js
-import alias from 'rollup-plugin-alias';
-
-export default {
-  input: './src/index.js',
-  plugins: [alias({
-    resolve: ['.jsx', '.js'],
-    foo: './bar'  // Will check for ./bar.jsx and ./bar.js
-  })],
-};
-```
-If not given local aliases will be resolved with a `.js` extension.
+You can use either simple Strings or Regular Expressions to search in a more distinct and complex manner (e.g. to do partial replacements via subpattern-matching, see aboves example).
 
 ## License
 MIT, see `LICENSE` for more information

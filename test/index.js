@@ -25,9 +25,11 @@ test('defaults', (t) => {
 
 test('Simple aliasing', (t) => {
   const result = alias({
-    foo: 'bar',
-    pony: 'paradise',
-    './local': 'global',
+    entries: [
+      {find:'foo', replacement:'bar'},
+      {find:'pony', replacement:'paradise'},
+      {find:'./local',replacement:'global'}
+    ]
   });
 
   const resolved = result.resolveId('foo', '/src/importer.js');
@@ -39,10 +41,34 @@ test('Simple aliasing', (t) => {
   t.is(resolved3, 'global');
 });
 
+test('RegExp aliasing', (t) => {
+  const result = alias({
+    entries: [
+      {find:/f(o+)bar/, replacement:'f$1bar2019'},
+      {find:new RegExp('.*pony.*'), replacement:'i/am/a/barbie/girl'},
+      {find:/^test\/$/, replacement:'this/is/strict'}
+    ]
+  });
+
+  const resolved = result.resolveId('fooooooooobar', '/src/importer.js');
+  const resolved2 = result.resolveId('im/a/little/pony/yes', '/src/importer.js');
+  const resolved3 = result.resolveId('./test', '/src/importer.js');
+  const resolved4 = result.resolveId('test', '/src/importer.js');
+  const resolved5 = result.resolveId('test/', '/src/importer.js');
+
+  t.is(resolved, 'fooooooooobar2019');
+  t.is(resolved2, 'i/am/a/barbie/girl');
+  t.is(resolved3, null);
+  t.is(resolved4, null);
+  t.is(resolved5, 'this/is/strict');
+});
+
 test('Will not confuse modules with similar names', (t) => {
   const result = alias({
-    foo: 'bar',
-    './foo': 'bar',
+    entries:[
+      {find:'foo', replacement:'bar'},
+      {find:'./foo', replacement:'bar'},
+    ]
   });
 
   const resolved = result.resolveId('foo2', '/src/importer.js');
@@ -56,8 +82,10 @@ test('Will not confuse modules with similar names', (t) => {
 
 test('Local aliasing', (t) => {
   const result = alias({
-    foo: './bar',
-    pony: './par/a/di/se',
+    entries:[
+      {find:'foo', replacement:'./bar'},
+      {find:'pony', replacement:'./par/a/di/se'}
+    ]
   });
 
   const resolved = result.resolveId('foo', '/src/importer.js');
@@ -84,8 +112,10 @@ test('Relative aliasing', (t) => {
 
 test('Absolute local aliasing', (t) => {
   const result = alias({
-    foo: '/bar',
-    pony: '/par/a/di/se.js',
+    entries:[
+      {find:'foo', replacement:'/bar'},
+      {find:'pony', replacement:'/par/a/di/se.js'}
+    ]
   });
 
   const resolved = result.resolveId('foo', '/src/importer.js');
@@ -101,7 +131,9 @@ test('Absolute local aliasing', (t) => {
 
 test('Leaves entry file untouched if matches alias', (t) => {
   const result = alias({
-    abacaxi: './abacaxi',
+    entries:[
+      {find:'abacaxi', replacement:'./abacaxi'}
+    ]
   });
 
   const resolved = result.resolveId('abacaxi/entry.js', undefined);
@@ -111,8 +143,10 @@ test('Leaves entry file untouched if matches alias', (t) => {
 
 test('Test for the resolve property', (t) => {
   const result = alias({
-    ember: './folder/hipster',
     resolve: ['.js', '.jsx'],
+    entries:[
+      {find:'ember', replacement: './folder/hipster'},
+    ]
   });
 
   const resolved = result.resolveId('ember', posix.resolve(DIRNAME, './files/index.js'));
@@ -122,7 +156,9 @@ test('Test for the resolve property', (t) => {
 
 test('i/am/a/file', (t) => {
   const result = alias({
-    resolve: 'i/am/a/file',
+    entries:[
+      {find:'resolve', replacement: 'i/am/a/file'}
+    ]
   });
 
   const resolved = result.resolveId('resolve', '/src/import.js');
@@ -132,7 +168,9 @@ test('i/am/a/file', (t) => {
 
 test('i/am/a/local/file', (t) => {
   const result = alias({
-    resolve: './i/am/a/local/file',
+    entries:[
+      {find:'resolve', replacement: './i/am/a/local/file'}
+    ]
   });
 
   const resolved = result.resolveId('resolve', posix.resolve(DIRNAME, './files/index.js'));
@@ -143,7 +181,9 @@ test('i/am/a/local/file', (t) => {
 test('Platform path.resolve(\'file-without-extension\') aliasing', (t) => {
   // this what used in React and Vue
   const result = alias({
-    test: path.resolve('./test/files/aliasMe'),
+    entries:[
+      {find:'test', replacement:path.resolve('./test/files/aliasMe')}
+    ]
   });
 
   const resolved = result.resolveId('test', posix.resolve(DIRNAME, './files/index.js'));
@@ -153,7 +193,9 @@ test('Platform path.resolve(\'file-without-extension\') aliasing', (t) => {
 
 test('Windows absolute path aliasing', (t) => {
   const result = alias({
-    resolve: 'E:\\react\\node_modules\\fbjs\\lib\\warning',
+    entries:[
+      {find:'resolve', replacement:'E:\\react\\node_modules\\fbjs\\lib\\warning'}
+    ]
   });
 
   const resolved = result.resolveId('resolve', posix.resolve(DIRNAME, './files/index.js'));
@@ -166,7 +208,9 @@ test('Windows absolute path aliasing', (t) => {
 
 test('Platform path.resolve(\'file-with.ext\') aliasing', (t) => {
   const result = alias({
-    test: path.resolve('./test/files/folder/hipster.jsx'),
+    entries:[
+      {find:'test', replacement:path.resolve('./test/files/folder/hipster.jsx')},
+    ],
     resolve: ['.js', '.jsx'],
   });
 
@@ -192,10 +236,12 @@ const getModuleIdsFromBundle = (bundle) => {
 test('Works in rollup', t => rollup({
   input: './test/files/index.js',
   plugins: [alias({
-    fancyNumber: './aliasMe',
-    './anotherFancyNumber': './localAliasMe',
-    numberFolder: './folder',
-    './numberFolder': './folder',
+    entries:[
+      {find:'fancyNumber', replacement:'./aliasMe'},
+      {find:'./anotherFancyNumber', replacement: './localAliasMe'},
+      {find:'numberFolder', replacement:'./folder'},
+      {find:'./numberFolder', replacement: './folder'}
+    ]
   })],
 }).then(getModuleIdsFromBundle)
   .then((moduleIds) => {
