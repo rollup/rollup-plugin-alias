@@ -1,6 +1,6 @@
 {
   "name": "rollup-plugin-alias",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Resolves aliases with Rollup",
   "main": "dist/rollup-plugin-alias.js",
   "module": "dist/rollup-plugin-alias.es2015.js",
