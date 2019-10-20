@@ -1,5 +1,9 @@
 # rollup-plugin-alias changelog
 
+## 2.1.0
+*2019-10.18*
+* Add support for object syntax ([#61](https://github.com/rollup/rollup-plugin-alias/pull/61))
+
 ## 2.0.1
 *2019-09-27*
 * Update dependencies ([#59](https://github.com/rollup/rollup-plugin-alias/pull/59))
