@@ -198,6 +198,20 @@ test('Platform path.resolve(\'file-without-extension\') aliasing', (t) => {
   t.is(resolved, path.resolve('./test/files/aliasMe.js'));
 });
 
+test('Platform path.resolve(\'just-a-folder\') aliasing', (t) => {
+  // this what used in RSvelte
+  const result = alias({
+    resolve: ['.svelte', '.js'],
+    entries:[
+      {find:'test', replacement:path.resolve('./test/files/Svelte')}
+    ]
+  });
+
+  const resolved = result.resolveId('test', posix.resolve(DIRNAME, './files/index.js'));
+
+  t.is(resolved, path.resolve('./test/files/Svelte/index.svelte'));
+});
+
 test('Windows absolute path aliasing', (t) => {
   const result = alias({
     entries:[
