@@ -23,13 +23,31 @@ test('defaults', (t) => {
   t.is(typeof result.resolveId, 'function');
 });
 
-test('Simple aliasing', (t) => {
+test('Simple aliasing (array)', (t) => {
   const result = alias({
     entries: [
       {find:'foo', replacement:'bar'},
       {find:'pony', replacement:'paradise'},
       {find:'./local',replacement:'global'}
     ]
+  });
+
+  const resolved = result.resolveId('foo', '/src/importer.js');
+  const resolved2 = result.resolveId('pony', '/src/importer.js');
+  const resolved3 = result.resolveId('./local', '/src/importer.js');
+
+  t.is(resolved, 'bar');
+  t.is(resolved2, 'paradise');
+  t.is(resolved3, 'global');
+});
+
+test('Simple aliasing (object)', (t) => {
+  const result = alias({
+    entries:  {
+      foo: 'bar',
+      pony: 'paradise',
+      './local': 'global'
+    }
   });
 
   const resolved = result.resolveId('foo', '/src/importer.js');
@@ -189,6 +207,20 @@ test('Platform path.resolve(\'file-without-extension\') aliasing', (t) => {
   const resolved = result.resolveId('test', posix.resolve(DIRNAME, './files/index.js'));
 
   t.is(resolved, path.resolve('./test/files/aliasMe.js'));
+});
+
+test('Platform path.resolve(\'just-a-folder\') aliasing', (t) => {
+  // this what used in RSvelte
+  const result = alias({
+    resolve: ['.svelte', '.js'],
+    entries:[
+      {find:'test', replacement:path.resolve('./test/files/Svelte')}
+    ]
+  });
+
+  const resolved = result.resolveId('test', posix.resolve(DIRNAME, './files/index.js'));
+
+  t.is(resolved, path.resolve('./test/files/Svelte/index.svelte'));
 });
 
 test('Windows absolute path aliasing', (t) => {

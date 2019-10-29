@@ -40,12 +40,24 @@ const normalizeId = (id) => {
   return id;
 };
 
+const getEntries = ({ entries }) => {
+  if (!entries) {
+    return [];
+  }
+
+  if (Array.isArray(entries)) {
+    return entries;
+  }
+
+  return Object.keys(entries).map(key => ({ find: key, replacement: entries[key] }));
+};
+
 export default function alias(options = {}) {
   const resolve = Array.isArray(options.resolve) ? options.resolve : ['.js'];
-  const entries = options.entries?options.entries:[];
+  const entries = getEntries(options);
 
   // No aliases?
-  if (!entries || entries.length === 0) {
+  if (entries.length === 0) {
     return {
       resolveId: noop,
     };
@@ -79,7 +91,13 @@ export default function alias(options = {}) {
         } else if (endsWith('.js', filePath)) {
           updatedId = filePath;
         } else {
-          updatedId = filePath + '.js';
+          const indexFilePath = posix.resolve(directory, `${updatedId}/index`);
+          const defaultMatch = resolve.map(ext => `${indexFilePath}${ext}`).find(exists);
+          if (defaultMatch) {
+            updatedId = defaultMatch;
+          } else {
+            updatedId = filePath + '.js';
+          }
         }
       }
 

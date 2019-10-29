@@ -1,13 +1,21 @@
 # rollup-plugin-alias changelog
 
+## 2.2.0
+*2019-10-21*
+* Support resolving `index.js` files in directories ([#64](https://github.com/rollup/rollup-plugin-alias/pull/64) by @jerriclynsjohn)
+
+## 2.1.0
+*2019-10-18*
+* Add support for object syntax ([#61](https://github.com/rollup/rollup-plugin-alias/pull/61) by @Andarist)
+
 ## 2.0.1
 *2019-09-27*
-* Update dependencies ([#59](https://github.com/rollup/rollup-plugin-alias/pull/59))
-* Make volume letter regexp case independent ([#57](https://github.com/rollup/rollup-plugin-alias/pull/57))
+* Update dependencies ([#59](https://github.com/rollup/rollup-plugin-alias/pull/59) by @lukastaegert)
+* Make volume letter regexp case independent ([#57](https://github.com/rollup/rollup-plugin-alias/pull/57) by @MarekLacoAXA)
 
 ## 2.0.0
 *2019-08-22*
-* Add RegExp support and strict order of entries ([#53](https://github.com/rollup/rollup-plugin-alias/pull/53))
+* Add RegExp support and strict order of entries ([#53](https://github.com/rollup/rollup-plugin-alias/pull/53) by @thiscantbeserious)
 
 ### Breaking Changes
 Aliases always need to be provided as an array, see #53
