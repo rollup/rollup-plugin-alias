@@ -1,8 +1,9 @@
+# Moved
+
+This module has moved and is now available at [@rollup/plugin-alias](https://github.com/rollup/plugins). Please update your dependencies. This repository is no longer maintained.
+
 # rollup-plugin-alias
 Define aliases when bundling packages with Rollup.
-
-# Archived (Migration to Mono-Repo In-Process)
-This repository has been archived and is in the process of being migrated to a new monorepo. Please bear with us as we make this transition. More information to follow.
 
 [![Build Status](https://travis-ci.org/rollup/rollup-plugin-alias.svg?branch=master)](https://travis-ci.org/rollup/rollup-plugin-alias) [![Dependency Status](https://david-dm.org/frostney/rollup-plugin-alias.svg)](https://david-dm.org/frostney/rollup-plugin-alias) [![devDependency Status](https://david-dm.org/frostney/rollup-plugin-alias/dev-status.svg)](https://david-dm.org/frostney/rollup-plugin-alias#info=devDependencies) [![Coverage Status](https://coveralls.io/repos/github/frostney/rollup-plugin-alias/badge.svg?branch=master)](https://coveralls.io/github/frostney/rollup-plugin-alias?branch=master)
 
